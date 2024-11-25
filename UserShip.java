@@ -18,16 +18,52 @@ public class UserShip {
     }
 
     //Setters
+    public void setOwner (User sOwner) {
+        this.owner = sOwner;
+    }
+    public void setShipModel (ShipModel sShipModel) {
+        this.shipModel = sShipModel;
+    }
+    public void setUserShipCoreModulesArray (ArrayList<Module> sUserShipCoreModules) {
+        this.userShipCoreModules = sUserShipCoreModules;
+    }
+    public void setUserShipCoreModule (Module sModule, int i) {
+        this.userShipCoreModules.set(i, sModule);
+    }
+    public void setFSD (FSD sFrameShiftDrive) {
+        this.frameShiftDrive = sFrameShiftDrive;
+    }
+    public void setUserShipOptionalModulesArray (ArrayList<Module> sUserShipOptionalModules) {
+        this.userShipOptionalModules = sUserShipOptionalModules;
+    }
+    public void setUserShipOptionalModule (Module sModule, int i) {
+        this.userShipOptionalModules.set(i, sModule);
+    }
+    public void setTotalMass (double sTotalMass) {
+        this.totalMass = sTotalMass;
+    }
 
     //Getters
+    public User getOwner () {
+        return this.owner;
+    }
     public ShipModel getShipModel () {
         return shipModel;
     }
-    public Module getUserShipCoreModules (int i) {
+    public ArrayList<Module> getUserShipCoreModulesArray () {
+        return userShipCoreModules;
+    }
+    public Module getUserShipCoreModule (int i) {
         return userShipCoreModules.get(i);
     }
     public FSD getUserShipFSD () {
         return frameShiftDrive;
+    }
+    public ArrayList<Module> getUserShipOptionalModulesArray () {
+        return userShipOptionalModules;
+    }
+    public Module getUserShipOptionalModule (int i) {
+        return userShipOptionalModules.get(i);
     }
     public double getTotalMass () {
         return totalMass;
