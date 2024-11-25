@@ -132,15 +132,26 @@ public class Main {
                 userPassword = inUser.next();
             //Testing if the user and password provided are inside the User list provided in the .txt
                 if (UserAutentication(users, userName, userPassword) == true) {
-                    System.out.println("Autentication successful");
+                    System.out.println('\n'+ "" + '\n' + "" + '\n' + "Autentication successful" + '\n' + "" + '\n');
                     break;
                 } else {
                     System.out.println('\n'+ "" + '\n' + "" + '\n' + "User or Password Incorrect." + '\n' + "Try again.");
                 }
             }
-            while (optionSelection != 6)
-            System.out.println("What would you like to do, " + userName + "?");
-            String test = inUser.next();
+        //Main program loop. Looping all the options so the user can do diferent ones in the same instance without having to log in again.
+            while (optionSelection != 6) {
+                System.out.println("What would you like to do, " + userName + "?" + '\n' + "Please type the number of the option you would like to perform.");
+                System.out.println("||1. Calculate the max Jump Range of a ship." + '\n' + "||2. See the ships you currently have in your hangar." + '\n' + "||3. Add a new ship to the Hangar." + '\n' + "||4. Sell a ship from your hangar." + '\n' + "||5. Modify the modules of one of your Ships." + '\n' + "||6. Log off");
+                try {
+                    optionSelection = inUser.nextInt();
+                } catch (Exception e) {
+                    // TODO: handle exception
+                    System.out.println("Invalid selection. Try again.");
+                    //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
+                    inUser.next();
+                }
+                
+            }
         }     
 
     //Show all the data through CMD
@@ -192,6 +203,8 @@ public class Main {
         System.out.println(userShips.get(0));
 
         System.out.println("el salt total en LY és: " + CalculateJumpRange(objUserShipTest1));
+
+        inUser.close();
     }
     
 //METHODS
@@ -265,5 +278,4 @@ public class Main {
         
         return autenticationResult;
     }
-
 }
