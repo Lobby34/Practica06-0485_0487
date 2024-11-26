@@ -1,0 +1,11 @@
+owner
+shipModel NAME
+MODULE Identifier (25A,35A,45A)...
+FSD Identifier (5A)
+OptionalMODULE (Name,Name,Name)
+
+Lobby
+Mandalay
+25A,35A,55A,65A,75A
+5A
+-

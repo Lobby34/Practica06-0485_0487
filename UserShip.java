@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class UserShip {
-    User owner;
+    String owner;
     ShipModel shipModel;
     ArrayList<Module> userShipCoreModules;
     FSD frameShiftDrive;
@@ -9,7 +9,7 @@ public class UserShip {
     double totalMass;
 
     //Constructor method 
-    public UserShip (User uOwner, ShipModel uShipModel, ArrayList<Module> uUserShipCoreModules, FSD uFrameShiftDrive, ArrayList<Module> uUserShipOptionalModules) {
+    public UserShip (String uOwner, ShipModel uShipModel, ArrayList<Module> uUserShipCoreModules, FSD uFrameShiftDrive, ArrayList<Module> uUserShipOptionalModules) {
         this.owner = uOwner;
         this.shipModel = uShipModel;
         this.userShipCoreModules = uUserShipCoreModules;
@@ -18,7 +18,7 @@ public class UserShip {
     }
 
     //Setters
-    public void setOwner (User sOwner) {
+    public void setOwner (String sOwner) {
         this.owner = sOwner;
     }
     public void setShipModel (ShipModel sShipModel) {
@@ -44,7 +44,7 @@ public class UserShip {
     }
 
     //Getters
-    public User getOwner () {
+    public String getOwner () {
         return this.owner;
     }
     public ShipModel getShipModel () {
@@ -78,6 +78,8 @@ public class UserShip {
     public String toString () {
         return owner + " " + '\n' + shipModel.getShipName() + '\n' + userShipCoreModules.get(0) + '\n' + userShipCoreModules.get(1) + '\n' + frameShiftDrive + '\n' + userShipCoreModules.get(2) + '\n' + userShipCoreModules.get(3) + '\n' + userShipCoreModules.get(4) + '\n' + userShipCoreModules.get(5) + '\n' + userShipOptionalModules;
     }
+
+    
 
     //Add module to X position
 

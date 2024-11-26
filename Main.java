@@ -18,7 +18,7 @@ public class Main {
         ArrayList<FSD> fsds = new ArrayList<FSD>();
         ArrayList<String> shipModelFileOutput = new ArrayList<String>();
         ArrayList<ShipModel> shipModels = new ArrayList<ShipModel>();
-        ArrayList<String> shipModelsFileOutput = new ArrayList<String>();
+        ArrayList<String> usershipsFileOutput = new ArrayList<String>();
         ArrayList<UserShip> userShips = new ArrayList<UserShip>();
         ArrayList<String> userFileOutput = new ArrayList<String>();
         ArrayList<User> users = new ArrayList<>();
@@ -29,12 +29,14 @@ public class Main {
         File objClassRatingCoeficientsFile = new File("data\\ClassRatingCoeficients.txt");
         File objShipModelFile = new File("data\\ShipModel.txt");
         File objUserFile = new File("data\\User.txt");
+        File objUserShipFile = new File("data\\UserShip.txt");
 
         //Objects used to scrape the data from txt's
         Module moduleCreationObject;
         FSD fsdCreationObject;
         ShipModel shipModelCreationObject;
         User userCreationObject;
+        UserShip userShipCreationObject;
 
         //Other variables used in the main program.
         int[] ratingCoeficient = new int[5];
@@ -47,6 +49,9 @@ public class Main {
         boolean programStatus = true;
         boolean autenticationSuccessful = false;
         int optionSelection = 0;
+        int userPosition;
+        int shipSelected = 0;
+        int shipModelPosition = 0;
 
 //MAIN PROGRAM
     //Import data from all .txt
@@ -109,7 +114,7 @@ public class Main {
                 ));
             i = i+4;
         }
-        //USERSHIP.TXT
+        //USER.TXT
             //Calling the method to scrape and load all the data contained in the txt path provided above.
         userFileOutput = getDataFromTXT(objUserFile);
             //Transforming all the data scraped to objects so we can work with them in an array list.
@@ -122,7 +127,17 @@ public class Main {
                 ));
             i = i+3;
         }
-
+        //USERSHIP.TXT
+            //Calling the method to scrape and load all the data contained in the txt path provided above.
+            userFileOutput = getDataFromTXT(objUserShipFile);
+            //Transforming all the data scraped to objects so we can work with them in an array list.
+                //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-4 are parameters of an object, 5-8 another...)
+        for (int i = 6; i < (usershipsFileOutput.size()); i++) {
+            ArrayList<ShipModel> userShipModels = new ArrayList<>();
+            userShipModels.add(shipModels.get(ShipModelArrayPosition(shipModels, usershipsFileOutput.get(i+1))));
+            userShips.add(userShipCreationObject = new UserShip(usershipsFileOutput.get(i), userShipModels, modules, fsdCreationObject, modules));
+            i = i+3;
+        }
     //USER AUTENTICATION AND PROGRAM LOOP START
         while (programStatus) {
             while (!autenticationSuccessful) {
@@ -138,6 +153,7 @@ public class Main {
                     System.out.println('\n'+ "" + '\n' + "" + '\n' + "User or Password Incorrect." + '\n' + "Try again.");
                 }
             }
+            userPosition = UserArrayPosition(users, userName);
         //Main program loop. Looping all the options so the user can do diferent ones in the same instance without having to log in again.
             while (optionSelection != 6) {
                 System.out.println("What would you like to do, " + userName + "?" + '\n' + "Please type the number of the option you would like to perform.");
@@ -151,6 +167,39 @@ public class Main {
                     inUser.next();
                 }
                 
+
+
+                switch (optionSelection) {
+                    case 1:
+                        boolean validSelection = false;
+                        System.out.println("Select one of your current ships");
+                        while (!validSelection) {
+                            try {
+                                for (int i = 0; i < users.get(userPosition).getUserShipsArray().size(); i++) {
+                                    System.out.println(users.get(userPosition).getUserShip(i) + "" + '\n');
+                                }
+                                shipSelected = inUser.nextInt();
+                                validSelection = true;
+                            } catch (Exception e) {
+                                // TODO: handle exception
+                                System.out.println("Invalid selection. Try again.");
+                                //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
+                                inUser.next();
+                            }
+                        }
+
+                        CalculateJumpRange(users.get(userPosition).getUserShip(shipSelected));
+                        break;
+                
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        break;
+                }
             }
         }     
 
@@ -199,7 +248,7 @@ public class Main {
         UserShip objUserShipTest1 = new UserShip(null, shipModels.get(0), objModulesArrayTest1, fsds.get(19), objModulesArrayTest2);
         userShips.add(objUserShipTest1);
         User objUserTest1 = new User("Lobby", "1234", userShips);
-        objUserShipTest1.setOwner(objUserTest1);
+        objUserShipTest1.setOwner(objUserTest1.getName());
         System.out.println(userShips.get(0));
 
         System.out.println("el salt total en LY és: " + CalculateJumpRange(objUserShipTest1));
@@ -263,6 +312,30 @@ public class Main {
         double totalJumpRange = ((Math.pow(1000, (1/userShip.getUserShipFSD().getClassConstant()))*userShip.getUserShipFSD().getOptimalMass()*Math.pow((userShip.getUserShipFSD().getMaxFuelJump()/userShip.getUserShipFSD().getRatingConstant()),(1/userShip.getUserShipFSD().getClassConstant())))/userShip.getTotalMass());
         return totalJumpRange;
     }
+
+    //Know user array position
+    public static int UserArrayPosition (ArrayList<User> users, String userProvided) {
+        int userPosition = 0;
+        boolean userIsTheSame;
+        for (int i = 0; i < users.size(); i++) {
+            if (userIsTheSame = userProvided.equals(users.get(i).getName())) {
+                userPosition = i;
+            }
+        }
+        return userPosition;
+    }
+
+    //Know ShipModel array position
+        public static int ShipModelArrayPosition (ArrayList<ShipModel> shipModels, String shipModelProvided) {
+            int shipModelPosition = 0;
+            boolean shipModelIsTheSame;
+            for (int i = 0; i < shipModels.size(); i++) {
+                if (shipModelIsTheSame = shipModelProvided.equals(shipModels.get(i).getShipName())) {
+                    shipModelPosition = i;
+                }
+            }
+            return shipModelPosition;
+        }
 
     //Password validator
     public static boolean UserAutentication (ArrayList<User> userList, String userProvided, String passwordProvided) {
