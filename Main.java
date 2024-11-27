@@ -68,6 +68,8 @@ public class Main {
         String userName = "";
             //String used to store the password input from the user.
         String userPassword;
+            //Here to know if the selection made is valid for the submenues of the user menu.
+        boolean validSelection = false;
   
 //MAIN PROGRAM
     //Import data from all .txt
@@ -183,17 +185,19 @@ public class Main {
         //Main program loop. Looping all the options so the user can do diferent ones in the same instance without having to log in again.
             while (userLoggedOn) {
                 optionSelection = MenuOptionSelection(userName, inUser);
+            //Option menu for the normal User. (Center of the app.)
                 switch (optionSelection) {
+                //CASE 1: Calculate the Ship JumpRange Capabilities.
                     case 1:
-                        boolean validSelection = false;
                         System.out.println('\n'+ "" + '\n' + "" + '\n' + "Select one of your current ships" + '\n');
+                        validSelection = false;
                         while (!validSelection) {
                             try {
                                 ShowUserShips(userPosition, users);
                                 System.out.print("Your Selection: ");
                                 shipSelected = inUser.nextInt()-1;
                                 validSelection = true;
-                                                            } catch (Exception e) {
+                            } catch (Exception e) {
                                 // TODO: handle exception
                                 System.out.println("Invalid selection. Try again.");
                                 //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
@@ -205,40 +209,73 @@ public class Main {
                         PressEnterKey();
                         break;
 
+                //CASE 2: Show the User all their ships
                     case 2:
                         System.out.println('\n'+ "" + '\n' + "" + '\n');
                         ShowUserShips(userPosition, users);
                         PressEnterKey();
                         break;
 
+                //CASE 3: Add a new ship to the User's hangar
                     case 3:
-                        System.out.println("Option " + optionSelection + " Selected");
+                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "What model of ship would you like to add to your hangar?" + '\n');
+                        boolean cancelOperation = false;
+                        validSelection = false;
+                        while (!validSelection) {
+                            try {
+                                for (int i = 0; i < shipModels.size(); i++) {
+                                    System.out.println("||" + (i+1) + ": " + shipModels.get(i).getShipName());
+                                }
+                                System.out.println('\n' + "Your Selection: ");
+                                shipSelected = inUser.nextInt()-1;
+                                if(shipSelected < shipModels.size()) {
+                                    validSelection = true;
+                                    userShips.add(new UserShip(userName, shipModels.get(shipSelected), modules, fsds.get(GetFSDArrayPosition(fsds, "2E")), modules));
+                                } else if (shipSelected == (shipModels.size())) {
+                                    break;
+                                } else {
+                                    System.out.println("Invalid selection. Try again.");
+                                }
+                            } catch (Exception e) {
+                                // TODO: handle exception
+                                System.out.println("Invalid selection. Try again.");
+                                //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
+                                inUser.next();
+                            }
+                            System.out.println('\n'+ "" + '\n' + "" + '\n');
+                        }
+                        System.out.println("Test"); 
                         break;
-
+                        
+                //CASE 4: Remove an existent ship from the User's hangar
                     case 4:
                         System.out.println("Option " + optionSelection + " Selected");
                         break;
 
+                //CASE 5: Swap one of the users ship modules.
                     case 5:
                         System.out.println("Option " + optionSelection + " Selected");
                         break;
-
+                        
+                //CASE 6: Log off but keep the app running.
                     case 6:
                         System.out.println('\n'+ "" + '\n' + "" + '\n' + "You just logged off!!" + '\n'+ "" + '\n' + "" + '\n');
                         autenticationSuccessful = false;
                         userLoggedOn = false;
                         break;
-                        
+
+                //CASE 7: Log off, save progress and shut down the app.        
                     case 7:
                         System.out.println("Closing the program... ");
                         userLoggedOn = false;
                         autenticationSuccessful = false;
                         programStatus = false;
-
                         break;
+
+                //CASE 8: Other options not mentioned above. All of them will give an error.
                     default:
-                        System.out.println("Another option Selected. GO FUCK YOURSELF");
-                        userLoggedOn = false;
+                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "Invalid option selected." + '\n'+ "" + '\n' + "" + '\n');
+                        //userLoggedOn = false;
                         break;
                 }
             }
