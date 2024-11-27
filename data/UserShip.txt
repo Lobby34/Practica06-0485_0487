@@ -6,6 +6,12 @@ OptionalMODULE (Name,Name,Name)
 
 Lobby
 Mandalay
-2 5 A,3 5 A,5 5 A,6 5 A,7 5 A
+2 5 A,3 5 A,5 5 A,6 5 A,7 5 A,8 5 C
+5 A
+-
+
+Lobby
+Anaconda
+2 5 A,3 5 A,5 5 A,6 5 A,7 5 A,8 5 C
 5 A
 -
