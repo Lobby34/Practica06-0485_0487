@@ -6,6 +6,6 @@ OptionalMODULE (Name,Name,Name)
 
 Lobby
 Mandalay
-25A,35A,55A,65A,75A
-5A
+2 5 A,3 5 A,5 5 A,6 5 A,7 5 A
+5 A
 -

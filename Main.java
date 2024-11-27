@@ -48,11 +48,12 @@ public class Main {
         String userPassword;
         boolean programStatus = true;
         boolean autenticationSuccessful = false;
+        boolean userLoggedOn = false;
         int optionSelection = 0;
         int userPosition;
         int shipSelected = 0;
         int shipModelPosition = 0;
-
+  
 //MAIN PROGRAM
     //Import data from all .txt
         //CLASSRATINGCOEFICIENTS.TXT
@@ -129,17 +130,26 @@ public class Main {
         }
         //USERSHIP.TXT
             //Calling the method to scrape and load all the data contained in the txt path provided above.
-            userFileOutput = getDataFromTXT(objUserShipFile);
+        usershipsFileOutput = getDataFromTXT(objUserShipFile);
             //Transforming all the data scraped to objects so we can work with them in an array list.
                 //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-4 are parameters of an object, 5-8 another...)
         for (int i = 6; i < (usershipsFileOutput.size()); i++) {
-            ArrayList<ShipModel> userShipModels = new ArrayList<>();
-            userShipModels.add(shipModels.get(ShipModelArrayPosition(shipModels, usershipsFileOutput.get(i+1))));
-            userShips.add(userShipCreationObject = new UserShip(usershipsFileOutput.get(i), userShipModels, modules, fsdCreationObject, modules));
-            i = i+3;
+            userShips.add(userShipCreationObject = new UserShip(
+                usershipsFileOutput.get(i), 
+                shipModels.get(ShipModelArrayPosition(shipModels, usershipsFileOutput.get(i+1))), 
+                modules, 
+                fsds.get(FSDArrayPosition(fsds, usershipsFileOutput.get(i+3))), 
+                modules
+                ));
+            // UserShip usership1Test = new UserShip(String USERNAME, shipmodel SHIPMODEL , arraylistmodule INTERNAL MODULES, fsd FRAMESHIFTDRIVE, arraylistmodule OPTIONAL INTERNAL MODULES)
+            i = i+4;
         }
+        System.out.println(userShips.get(0));
+
     //USER AUTENTICATION AND PROGRAM LOOP START
         while (programStatus) {
+        //Here so if the user leaves and logins again the menu shows (and doesnt keep the last selected option) (Since logging off leaved last selection to log off, it would log off instantly)
+            optionSelection = 0;
             while (!autenticationSuccessful) {
                 System.out.println("Please, provide your Username.");
                 userName = inUser.next();
@@ -148,6 +158,7 @@ public class Main {
             //Testing if the user and password provided are inside the User list provided in the .txt
                 if (UserAutentication(users, userName, userPassword) == true) {
                     System.out.println('\n'+ "" + '\n' + "" + '\n' + "Autentication successful" + '\n' + "" + '\n');
+                    userLoggedOn = true;
                     break;
                 } else {
                     System.out.println('\n'+ "" + '\n' + "" + '\n' + "User or Password Incorrect." + '\n' + "Try again.");
@@ -155,20 +166,8 @@ public class Main {
             }
             userPosition = UserArrayPosition(users, userName);
         //Main program loop. Looping all the options so the user can do diferent ones in the same instance without having to log in again.
-            while (optionSelection != 6) {
-                System.out.println("What would you like to do, " + userName + "?" + '\n' + "Please type the number of the option you would like to perform.");
-                System.out.println("||1. Calculate the max Jump Range of a ship." + '\n' + "||2. See the ships you currently have in your hangar." + '\n' + "||3. Add a new ship to the Hangar." + '\n' + "||4. Sell a ship from your hangar." + '\n' + "||5. Modify the modules of one of your Ships." + '\n' + "||6. Log off");
-                try {
-                    optionSelection = inUser.nextInt();
-                } catch (Exception e) {
-                    // TODO: handle exception
-                    System.out.println("Invalid selection. Try again.");
-                    //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
-                    inUser.next();
-                }
-                
-
-
+            while (userLoggedOn) {
+                optionSelection = MenuOptionSelection(userName, inUser);
                 switch (optionSelection) {
                     case 1:
                         boolean validSelection = false;
@@ -190,14 +189,30 @@ public class Main {
 
                         CalculateJumpRange(users.get(userPosition).getUserShip(shipSelected));
                         break;
-                
                     case 2:
+                        System.out.println("Option " + optionSelection + " Selected");
                         break;
                     case 3:
+                        System.out.println("Option " + optionSelection + " Selected");
                         break;
                     case 4:
+                        System.out.println("Option " + optionSelection + " Selected");
                         break;
                     case 5:
+                        System.out.println("Option " + optionSelection + " Selected");
+                        break;
+                    case 6:
+                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "You just logged off!!" + '\n'+ "" + '\n' + "" + '\n');
+                        autenticationSuccessful = false;
+                        userLoggedOn = false;
+                        break;
+                    case 7:
+                        System.out.println("Option " + optionSelection + " Selected");
+                        userLoggedOn = false;
+                        break;
+                    default:
+                        System.out.println("Another option Selected. GO FUCK YOURSELF");
+                        userLoggedOn = false;
                         break;
                 }
             }
@@ -257,7 +272,7 @@ public class Main {
     }
     
 //METHODS
-    //Method to use Rating and Coeficients. Cant use the one bellow since those are with ArrayLists, this one is with normal Arrays.
+    //Method to read, Process and Store Rating and Coeficients. Cant use the one bellow since those are with ArrayLists, this one is with normal Arrays.
     public static void getClassRatingCoeficients(File objFile, int[] ratingCoeficient, double[] classCoeficient) {
         try {
             int i = 0;
@@ -313,28 +328,38 @@ public class Main {
         return totalJumpRange;
     }
 
-    //Know user array position
+    //Know User position in the array of the ship models
     public static int UserArrayPosition (ArrayList<User> users, String userProvided) {
         int userPosition = 0;
-        boolean userIsTheSame;
         for (int i = 0; i < users.size(); i++) {
-            if (userIsTheSame = userProvided.equals(users.get(i).getName())) {
+            if (userProvided.equals(users.get(i).getName())) {
                 userPosition = i;
             }
         }
         return userPosition;
     }
 
-    //Know ShipModel array position
+    //Know ShipModel position in the array of ship models
         public static int ShipModelArrayPosition (ArrayList<ShipModel> shipModels, String shipModelProvided) {
             int shipModelPosition = 0;
-            boolean shipModelIsTheSame;
             for (int i = 0; i < shipModels.size(); i++) {
-                if (shipModelIsTheSame = shipModelProvided.equals(shipModels.get(i).getShipName())) {
+                if (shipModelProvided.equals(shipModels.get(i).getShipName())) {
                     shipModelPosition = i;
                 }
             }
             return shipModelPosition;
+        }
+
+    //Know FSD position in the array of FSD thorugh Class and Rating
+        public static int FSDArrayPosition (ArrayList<FSD> fsds, String identidierProvided) {
+            int FSDArrayPosition = 0;
+            String[] FSDArrayProvided = identidierProvided.split(" ");
+            for (int i = 0; i < fsds.size(); i++) {
+                if (fsds.get(i).getClassNumber() == Integer.parseInt(FSDArrayProvided[0]) && fsds.get(i).getRatingCharacter().equals(FSDArrayProvided[1].charAt(0))) {
+                    FSDArrayPosition = i;
+                }
+            }
+            return FSDArrayPosition;
         }
 
     //Password validator
@@ -350,5 +375,21 @@ public class Main {
         }
         
         return autenticationResult;
+    }
+
+    //User option selection 
+    public static int MenuOptionSelection (String userName, Scanner inUser) {
+        int optionSelection = 0;
+        System.out.println("What would you like to do, " + userName + "?" + '\n' + "Please type the number of the option you would like to perform.");
+        System.out.println("||1. Calculate the max Jump Range of a ship." + '\n' + "||2. See the ships you currently have in your hangar." + '\n' + "||3. Add a new ship to the Hangar." + '\n' + "||4. Sell a ship from your hangar." + '\n' + "||5. Modify the modules of one of your Ships." + '\n' + "||6. Log off" + '\n' +"||7. Shut down the program and save the files.");   
+        try {
+            optionSelection = inUser.nextInt();
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Invalid selection. Try again.");
+            //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
+            inUser.next();
+        }
+        return optionSelection;
     }
 }
