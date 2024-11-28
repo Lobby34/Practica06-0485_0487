@@ -262,7 +262,7 @@ public class Main {
                             ShowUserShips(userPosition, users, true);
                             shipSelected = inUser.nextInt()-1;
                             if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
-                                System.out.println("Are you sure that you want to REMOVE PERMANENTLY your SHIP: || " + users.get(userPosition).getUserShip(shipSelected) + "?" + '\n' + "(Y/N)");
+                                System.out.println("Are you sure that you want to PERMANENTLY REMOVE your: || " + users.get(userPosition).getUserShip(shipSelected).getShipModel().getShipName() + "?" + '\n' + "(Y/N)");
                                 System.out.print('\n' + "Your Selection: ");
                                 userConfirmation = inUser.next();
                                 if (userConfirmation.charAt(0) == 'Y' || userConfirmation.charAt(0) == 'y') {
@@ -280,7 +280,14 @@ public class Main {
 
                 //CASE 5: Swap one of the users ship modules.
                     case 5:
-                        System.out.println("Option " + optionSelection + " Selected");
+                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "Select what ship would you like to modify" + '\n');
+                        ShowUserShips(userPosition, users, true);
+                        shipSelected = inUser.nextInt()-1;
+                        if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
+                            int slotProvided = ModuleMenuOptionSelection(modules, inUser);
+                            String moduleSelected = inUser.next();
+                            System.out.println(modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)));
+                        }
                         break;
                         
                 //CASE 6: Log off but keep the app running.
@@ -415,6 +422,17 @@ public class Main {
         return FSDArrayPosition;
     }
 
+    //Know in what position a given module is in an array.
+    public static int GetModuleArrayPosition (ArrayList<Module> modules, int moduleType, String identidierProvided) {
+        int moduleArrayPosition = 0;
+        for (int i = 0; i < modules.size(); i++) {
+            if (modules.get(i).getSlot() == moduleType && modules.get(i).getClassNumber() == identidierProvided.charAt(0)-'0') && modules.get(i).getRatingCharacter().equals(identidierProvided.charAt(0)) {
+                   moduleArrayPosition = i;
+            }
+        }
+        return moduleArrayPosition;
+    }
+
     //Know the Array positions of all the CORE modules that a provided ship has.
     public static ArrayList<Module> GetCoreModulesArrayPositions (ArrayList<Module> modules, String modulesProvided) {
         ArrayList<Module> coreModulesArrayPositions = new ArrayList<>();
@@ -468,6 +486,32 @@ public class Main {
         return optionSelection;
     }
 
+    //Module menu Selection
+    public static int ModuleMenuOptionSelection (ArrayList<Module> modules, Scanner inUser) {
+        int optionSelection = 0;
+        Boolean validSelection = false;
+        System.out.println('\n'+ "" + '\n' + "" + '\n' + "Which module slot would you like to change?");
+        System.out.println("||1. Power Plant." + '\n' + "||2. Thrusters." + '\n' + "||3. FSD." + '\n' + "||4. Life Support." + '\n' + "||5. Power Distributor." + '\n' + "||6. Sensors" + '\n' +"||7. Fuel Tank" + '\n');
+        System.out.print("Your Selection: "); 
+        while (!validSelection) {
+            try {
+                optionSelection = inUser.nextInt()+1;
+                validSelection = true;
+            } catch (Exception e) {
+                // TODO: handle exception
+                System.out.println("Invalid selection. Try again.");
+                //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
+                inUser.next();
+            }
+        }
+        for (int i = 0; i < modules.size(); i++) {
+            if (optionSelection == modules.get(i).getSlot()) {
+                System.out.println(modules.get(i));
+            }
+        }
+        return optionSelection;
+    }
+
     //Show the ships the User OWNS.
     public static void ShowUserShips (int userPosition, ArrayList<User> users, Boolean lastOption) {
         int i = 0;
@@ -479,8 +523,8 @@ public class Main {
         }
     }
 
+    //Press Space to continue...
     public static void PressEnterKey () {
-        //Press Space to continue...
         try
         {
             System.out.println("Press Enter key to continue...");
