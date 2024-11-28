@@ -45,6 +45,8 @@ public class Main {
         //Other variables used in the main program. 
             //Scanner for all the user inputs
         Scanner inUser = new Scanner(System.in);
+            //Scanner here BC USING THE OTHER ONE IN THE 5th CASE FOR SOME REASON MAKES EVERYTHING JUST CRASH
+        Scanner inUserCase5 = new Scanner(System.in);
             //Boolean to know if the program has to continue runnning or stop its execution
         boolean programStatus = true;
             //Boolean to get out of the autentication process loop.
@@ -188,7 +190,6 @@ public class Main {
                         while (!validSelection) {
                             try {
                                 ShowUserShips(userPosition, users, true);
-                                System.out.print('\n' + "Your Selection: ");
                                 shipSelected = inUser.nextInt()-1;
                                 validSelection = true;
                             } catch (Exception e) {
@@ -237,12 +238,45 @@ public class Main {
                                         userShips.getLast().calculateTotalMass();
                                         System.out.println("Ship added Successfully." + '\n');
                                     } else {
+                                        System.out.println("Process Canceled." + '\n');                                        
                                         validSelection = true;
                                     }
                                 } else if (shipSelected == (shipModels.size())) {
                                     validSelection = true;
                                 } else {
-                                    System.out.println("-Invalid selection. Try again.");
+                                    System.out.println("Invalid selection. Try again.");
+                                }
+                                PressEnterKey();
+                            } catch (Exception e) {
+                                // TODO: handle exception
+                                System.out.println('\n'+ "" + '\n' + "" + '\n' + "Invalid selection. Try again.");
+                                //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
+                                inUser.next();
+                            }
+
+                            System.out.println('\n'+ "" + '\n' + "" + '\n');
+                        }
+                        break;
+                        
+                //CASE 4: Remove an existent ship from the User's hangar
+                    case 4:
+                        validSelection = false;
+                        while (!validSelection) {
+                            try {
+                                System.out.println('\n'+ "" + '\n' + "" + '\n' + "What ship would you like to remove from your hangar?" + '\n');                        
+                                ShowUserShips(userPosition, users, true);
+                                shipSelected = inUser.nextInt()-1;
+                                if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
+                                    System.out.print('\n' + "Are you sure that you want to PERMANENTLY REMOVE your: || " + users.get(userPosition).getUserShip(shipSelected).getShipModel().getShipName() + "?" + '\n' + "(Y/N)" + '\n' +"Your Selection: ");
+                                    userConfirmation = inUser.next();
+                                    
+                                    if (userConfirmation.charAt(0) == 'Y' || userConfirmation.charAt(0) == 'y') {
+                                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "The ship has been removed PERMANENTLY" + '\n');
+                                        users.get(userPosition).getUserShipsArray().remove(shipSelected);
+                                    } else {
+                                        System.out.println("Process Canceled." + '\n');
+                                    }
+                                    validSelection = true;
                                 }
                             } catch (Exception e) {
                                 // TODO: handle exception
@@ -250,43 +284,31 @@ public class Main {
                                 //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
                                 inUser.next();
                             }
+                        }
                             PressEnterKey();
-                            System.out.println('\n'+ "" + '\n' + "" + '\n');
-                        }
-                        break;
-                        
-                //CASE 4: Remove an existent ship from the User's hangar
-                    case 4:
-                        try {
-                            System.out.println('\n'+ "" + '\n' + "" + '\n' + "What ship would you like to remove from your hangar?" + '\n');                        
-                            ShowUserShips(userPosition, users, true);
-                            shipSelected = inUser.nextInt()-1;
-                            if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
-                                System.out.println("Are you sure that you want to PERMANENTLY REMOVE your: || " + users.get(userPosition).getUserShip(shipSelected).getShipModel().getShipName() + "?" + '\n' + "(Y/N)");
-                                System.out.print('\n' + "Your Selection: ");
-                                userConfirmation = inUser.next();
-                                if (userConfirmation.charAt(0) == 'Y' || userConfirmation.charAt(0) == 'y') {
-                                    users.get(userPosition).getUserShipsArray().remove(shipSelected);
-                                }
-                            }
-                        } catch (Exception e) {
-                            // TODO: handle exception
-                            System.out.println("Invalid selection. Try again.");
-                            //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
-                            inUser.next();
-                        }
-                        PressEnterKey();
                         break;
 
                 //CASE 5: Swap one of the users ship modules.
                     case 5:
-                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "Select what ship would you like to modify" + '\n');
-                        ShowUserShips(userPosition, users, true);
-                        shipSelected = inUser.nextInt()-1;
-                        if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
-                            int slotProvided = ModuleMenuOptionSelection(modules, inUser);
-                            String moduleSelected = inUser.next();
-                            System.out.println(modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)));
+                        validSelection = false;
+                        while (!validSelection) {
+                            System.out.println('\n'+ "" + '\n' + "" + '\n' + "Select what ship would you like to modify" + '\n');
+                            ShowUserShips(userPosition, users, true);
+                            try {
+                                shipSelected = inUser.nextInt()-1;
+                                System.out.println(users.get(userPosition).getUserShip(shipSelected).getUserShipCoreModulesArray());
+                                if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
+                                    int slotProvided = ModuleMenuOptionSelection(modules, inUser);
+                                    String moduleSelected = inUserCase5.next();
+                                    System.out.println(modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)));
+                                }
+                                validSelection = false;
+                            } catch (Exception e) {
+                                // TODO: handle exception
+                                System.out.println("Invalid selection. Try again.");
+                                //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
+                                inUser.next();
+                            }
                         }
                         break;
                         
@@ -426,7 +448,7 @@ public class Main {
     public static int GetModuleArrayPosition (ArrayList<Module> modules, int moduleType, String identidierProvided) {
         int moduleArrayPosition = 0;
         for (int i = 0; i < modules.size(); i++) {
-            if (modules.get(i).getSlot() == moduleType && modules.get(i).getClassNumber() == identidierProvided.charAt(0)-'0') && modules.get(i).getRatingCharacter().equals(identidierProvided.charAt(0)) {
+            if (modules.get(i).getSlot() == moduleType && modules.get(i).getClassNumber() == identidierProvided.charAt(0)-'0' && modules.get(i).getRatingCharacter().equals(identidierProvided.charAt(1))) {
                    moduleArrayPosition = i;
             }
         }
@@ -471,31 +493,31 @@ public class Main {
 
     //User option selection 
     public static int MenuOptionSelection (String userName, Scanner inUser) {
-        int optionSelection = 0;
+        int optionSelectionA = 0;
         System.out.println("What would you like to do, " + userName + "?" + '\n' + "Please type the number of the option you would like to perform.");
         System.out.println("||1. Calculate the max Jump Range of a ship." + '\n' + "||2. See the ships you currently have in your hangar." + '\n' + "||3. Add a new ship to the Hangar." + '\n' + "||4. Sell a ship from your hangar." + '\n' + "||5. Modify the modules of one of your Ships." + '\n' + "||6. Log off & Save" + '\n' +"||7. Shut down the program & Save" + '\n');
         System.out.print("Your Selection: "); 
         try {
-            optionSelection = inUser.nextInt();
+            optionSelectionA = inUser.nextInt();
         } catch (Exception e) {
             // TODO: handle exception
             System.out.println("Invalid selection. Try again.");
             //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
             inUser.next();
         }
-        return optionSelection;
+        return optionSelectionA;
     }
 
     //Module menu Selection
     public static int ModuleMenuOptionSelection (ArrayList<Module> modules, Scanner inUser) {
-        int optionSelection = 0;
+        int optionSelectionB = 0;
         Boolean validSelection = false;
         System.out.println('\n'+ "" + '\n' + "" + '\n' + "Which module slot would you like to change?");
         System.out.println("||1. Power Plant." + '\n' + "||2. Thrusters." + '\n' + "||3. FSD." + '\n' + "||4. Life Support." + '\n' + "||5. Power Distributor." + '\n' + "||6. Sensors" + '\n' +"||7. Fuel Tank" + '\n');
         System.out.print("Your Selection: "); 
         while (!validSelection) {
             try {
-                optionSelection = inUser.nextInt()+1;
+                optionSelectionB = inUser.nextInt()+1;
                 validSelection = true;
             } catch (Exception e) {
                 // TODO: handle exception
@@ -505,11 +527,12 @@ public class Main {
             }
         }
         for (int i = 0; i < modules.size(); i++) {
-            if (optionSelection == modules.get(i).getSlot()) {
+            if (optionSelectionB == modules.get(i).getSlot()) {
                 System.out.println(modules.get(i));
             }
         }
-        return optionSelection;
+        System.out.print('\n' + "Your Selection: ");
+        return optionSelectionB;
     }
 
     //Show the ships the User OWNS.
@@ -521,6 +544,7 @@ public class Main {
         if (lastOption) {
             System.out.println("||" + (i+1) + ".    Cancel Operation.");
         }
+        System.out.print('\n' + "Your Selection: ");
     }
 
     //Press Space to continue...
