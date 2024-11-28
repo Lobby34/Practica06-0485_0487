@@ -36,13 +36,6 @@ public class Main {
         File objUserFile = new File("data\\User.txt");
         File objUserShipFile = new File("data\\UserShip.txt");
 
-        //Objects used to scrape the data from txt's
-        Module moduleCreationObject;
-        FSD fsdCreationObject;
-        ShipModel shipModelCreationObject;
-        User userCreationObject;
-        UserShip userShipCreationObject;
-
         //Variables used to create the class objects.
         int[] ratingCoeficient = new int[5];
         double[] classCoeficient = new double[7];
@@ -70,6 +63,8 @@ public class Main {
         String userPassword;
             //Here to know if the selection made is valid for the submenues of the user menu.
         boolean validSelection = false;
+            //Option to confirm the action that the user is about to do.
+        String userConfirmation = "";
   
 //MAIN PROGRAM
     //Import data from all .txt
@@ -81,7 +76,7 @@ public class Main {
             //Transforming all the data scraped to objects so we can work with them in an array list.
                 //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-5 are parameters of an object, 6-10 another...)
         for (int i = 9; i < (moduleFileOutput.size()); i++) {
-            modules.add(moduleCreationObject = new Module(
+            modules.add(new Module(
                 Integer.parseInt(moduleFileOutput.get(i+1)), 
                 Integer.parseInt(moduleFileOutput.get(i+2)), 
                 moduleFileOutput.get(i+3).charAt(0), 
@@ -95,7 +90,7 @@ public class Main {
             //Transforming all the data scraped to objects so we can work with them in an array list.
                 //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 7. (positions 1-7 are parameters of an object, 8-15 another...)
         for (int i = 9; i < (FSDFileOutput.size()); i++) {
-            fsds.add(fsdCreationObject = new FSD(
+            fsds.add(new FSD(
                 Integer.parseInt(FSDFileOutput.get(i+1)), 
                 Integer.parseInt(FSDFileOutput.get(i+2)), 
                 FSDFileOutput.get(i+3).charAt(0), 
@@ -119,7 +114,7 @@ public class Main {
             shipModelMaxCoreInternal = shipModelFileOutput.get(i+2).split(",");
             shipModelMaxOptionalInternal = shipModelFileOutput.get(i+2).split(",");
                 //Constructor method of the shipModel without the Optional Internals. ATM Doing it without them.
-            shipModels.add(shipModelCreationObject = new ShipModel(
+            shipModels.add(new ShipModel(
                 shipModelFileOutput.get(i), 
                 Double.parseDouble(shipModelFileOutput.get(i+1)), 
                 Integer.parseInt(shipModelMaxCoreInternal[0]), 
@@ -138,7 +133,7 @@ public class Main {
             //Transforming all the data scraped to objects so we can work with them in an array list.
                 //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-4 are parameters of an object, 5-8 another...)
         for (int i = 0; i < (userFileOutput.size()); i++) {
-            users.add(userCreationObject = new User(
+            users.add(new User(
                 userFileOutput.get(i), 
                 userFileOutput.get(i+1), 
                 userShips
@@ -151,12 +146,11 @@ public class Main {
             //Transforming all the data scraped to objects so we can work with them in an array list.
                 //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-4 are parameters of an object, 5-8 another...)
         for (int i = 6; i < (usershipsFileOutput.size()); i++) {
-            userShips.add(userShipCreationObject = new UserShip(
+            userShips.add(new UserShip(
                 usershipsFileOutput.get(i), 
                 shipModels.get(ShipModelArrayPosition(shipModels, usershipsFileOutput.get(i+1))), 
                 GetCoreModulesArrayPositions(modules, usershipsFileOutput.get(i+2)), 
-                fsds.get(GetFSDArrayPosition(fsds, usershipsFileOutput.get(i+3))), 
-                modules
+                fsds.get(GetFSDArrayPosition(fsds, usershipsFileOutput.get(i+3)))
                 ));
             i = i+5;
         }
@@ -193,8 +187,8 @@ public class Main {
                         validSelection = false;
                         while (!validSelection) {
                             try {
-                                ShowUserShips(userPosition, users);
-                                System.out.print("Your Selection: ");
+                                ShowUserShips(userPosition, users, true);
+                                System.out.print('\n' + "Your Selection: ");
                                 shipSelected = inUser.nextInt()-1;
                                 validSelection = true;
                             } catch (Exception e) {
@@ -205,36 +199,50 @@ public class Main {
                             }
                             System.out.println('\n'+ "" + '\n' + "" + '\n');
                         }
-                        System.out.println("The MAX distance you can cover in a Jump is: " + CalculateJumpRange(users.get(userPosition).getUserShip(shipSelected)) + '\n'+ "" + '\n' + "" + '\n');
+                        if (shipSelected >= users.get(userPosition).getUserShipsArray().size()) {
+                        } else {
+                        System.out.println("The MAX distance you can cover in a Jump is: " + CalculateJumpRange(users.get(userPosition).getUserShip(shipSelected)) + '\n');
+                        }
                         PressEnterKey();
                         break;
 
                 //CASE 2: Show the User all their ships
                     case 2:
-                        System.out.println('\n'+ "" + '\n' + "" + '\n');
-                        ShowUserShips(userPosition, users);
+                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "Displaying all the ships you have stored in your Hangar.");
+                        ShowUserShips(userPosition, users, false);
+                        System.out.println("");
                         PressEnterKey();
                         break;
 
                 //CASE 3: Add a new ship to the User's hangar
                     case 3:
                         System.out.println('\n'+ "" + '\n' + "" + '\n' + "What model of ship would you like to add to your hangar?" + '\n');
-                        boolean cancelOperation = false;
                         validSelection = false;
                         while (!validSelection) {
                             try {
-                                for (int i = 0; i < shipModels.size(); i++) {
-                                    System.out.println("||" + (i+1) + ": " + shipModels.get(i).getShipName());
-                                }
-                                System.out.println('\n' + "Your Selection: ");
+                                int i = 0;
+                                    for (i = 0; i < shipModels.size(); i++) {
+                                        System.out.println("||" + (i+1) + ": " + shipModels.get(i).getShipName());
+                                    }
+                                System.out.println("||" + (i+1) + ": Cancel operation.");
+                                System.out.print('\n' + "Your Selection: ");
                                 shipSelected = inUser.nextInt()-1;
                                 if(shipSelected < shipModels.size()) {
                                     validSelection = true;
-                                    userShips.add(new UserShip(userName, shipModels.get(shipSelected), modules, fsds.get(GetFSDArrayPosition(fsds, "2E")), modules));
+                                    System.out.println("Are you sure that you want to add the ship model: || " + shipModels.get(shipSelected).getShipName() + "?" + '\n' + "(Y/N)");
+                                    System.out.print('\n' + "Your Selection: ");
+                                    userConfirmation = inUser.next();
+                                    if (userConfirmation.charAt(0) == 'Y' || userConfirmation.charAt(0) == 'y') {
+                                        userShips.add(new UserShip(userName, shipModels.get(shipSelected), GetCoreModulesArrayPositions(modules, "2 2 E,3 2 E,5 2 E,6 2 E,7 2 E,8 1 C"), fsds.get(GetFSDArrayPosition(fsds, "2 E"))));
+                                        userShips.getLast().calculateTotalMass();
+                                        System.out.println("Ship added Successfully." + '\n');
+                                    } else {
+                                        validSelection = true;
+                                    }
                                 } else if (shipSelected == (shipModels.size())) {
-                                    break;
+                                    validSelection = true;
                                 } else {
-                                    System.out.println("Invalid selection. Try again.");
+                                    System.out.println("-Invalid selection. Try again.");
                                 }
                             } catch (Exception e) {
                                 // TODO: handle exception
@@ -242,14 +250,32 @@ public class Main {
                                 //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
                                 inUser.next();
                             }
+                            PressEnterKey();
                             System.out.println('\n'+ "" + '\n' + "" + '\n');
                         }
-                        System.out.println("Test"); 
                         break;
                         
                 //CASE 4: Remove an existent ship from the User's hangar
                     case 4:
-                        System.out.println("Option " + optionSelection + " Selected");
+                        try {
+                            System.out.println('\n'+ "" + '\n' + "" + '\n' + "What ship would you like to remove from your hangar?" + '\n');                        
+                            ShowUserShips(userPosition, users, true);
+                            shipSelected = inUser.nextInt()-1;
+                            if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
+                                System.out.println("Are you sure that you want to REMOVE PERMANENTLY your SHIP: || " + users.get(userPosition).getUserShip(shipSelected) + "?" + '\n' + "(Y/N)");
+                                System.out.print('\n' + "Your Selection: ");
+                                userConfirmation = inUser.next();
+                                if (userConfirmation.charAt(0) == 'Y' || userConfirmation.charAt(0) == 'y') {
+                                    users.get(userPosition).getUserShipsArray().remove(shipSelected);
+                                }
+                            }
+                        } catch (Exception e) {
+                            // TODO: handle exception
+                            System.out.println("Invalid selection. Try again.");
+                            //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
+                            inUser.next();
+                        }
+                        PressEnterKey();
                         break;
 
                 //CASE 5: Swap one of the users ship modules.
@@ -282,6 +308,7 @@ public class Main {
         }
         inUser.close();
 
+/*
 //TESTS TO SHOW OBJECTS
     //Show all the data through CMD
         //Showing all the transfered data from module.txt as objects
@@ -294,6 +321,7 @@ public class Main {
         for (int i = 0; i < fsds.size(); i++) {
             System.out.println(fsds.get(i));
         }
+*/
     }
     
 //METHODS
@@ -427,7 +455,7 @@ public class Main {
     public static int MenuOptionSelection (String userName, Scanner inUser) {
         int optionSelection = 0;
         System.out.println("What would you like to do, " + userName + "?" + '\n' + "Please type the number of the option you would like to perform.");
-        System.out.println("||1. Calculate the max Jump Range of a ship." + '\n' + "||2. See the ships you currently have in your hangar." + '\n' + "||3. Add a new ship to the Hangar." + '\n' + "||4. Sell a ship from your hangar." + '\n' + "||5. Modify the modules of one of your Ships." + '\n' + "||6. Log off" + '\n' +"||7. Shut down the program and save the files." + '\n');
+        System.out.println("||1. Calculate the max Jump Range of a ship." + '\n' + "||2. See the ships you currently have in your hangar." + '\n' + "||3. Add a new ship to the Hangar." + '\n' + "||4. Sell a ship from your hangar." + '\n' + "||5. Modify the modules of one of your Ships." + '\n' + "||6. Log off & Save" + '\n' +"||7. Shut down the program & Save" + '\n');
         System.out.print("Your Selection: "); 
         try {
             optionSelection = inUser.nextInt();
@@ -441,9 +469,13 @@ public class Main {
     }
 
     //Show the ships the User OWNS.
-    public static void ShowUserShips (int userPosition, ArrayList<User> users) {
-        for (int i = 0; i < users.get(userPosition).getUserShipsArray().size(); i++) {
-            System.out.println("||" + (i+1) + ".    " + users.get(userPosition).getUserShip(i).getShipModel().getShipName() + " || " + users.get(userPosition).getUserShip(i).getTotalMass() + "[T]" +'\n');
+    public static void ShowUserShips (int userPosition, ArrayList<User> users, Boolean lastOption) {
+        int i = 0;
+        for (i = 0; i < users.get(userPosition).getUserShipsArray().size(); i++) {
+            System.out.println("||" + (i+1) + ".    " + users.get(userPosition).getUserShip(i).getShipModel().getShipName() + " || " + users.get(userPosition).getUserShip(i).getTotalMass() + "[T]");
+        }
+        if (lastOption) {
+            System.out.println("||" + (i+1) + ".    Cancel Operation.");
         }
     }
 

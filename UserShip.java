@@ -17,6 +17,14 @@ public class UserShip {
         this.userShipOptionalModules = uUserShipOptionalModules;
     }
 
+    //Constructor method without optional modules
+    public UserShip (String uOwner, ShipModel uShipModel, ArrayList<Module> uUserShipCoreModules, FSD uFrameShiftDrive) {
+        this.owner = uOwner;
+        this.shipModel = uShipModel;
+        this.userShipCoreModules = uUserShipCoreModules;
+        this.frameShiftDrive = uFrameShiftDrive;
+    }
+
     //Setters
     public void setOwner (String sOwner) {
         this.owner = sOwner;
@@ -78,10 +86,4 @@ public class UserShip {
     public String toString () {
         return owner + " " + '\n' + shipModel.getShipName() + '\n' + userShipCoreModules.get(0) + '\n' + userShipCoreModules.get(1) + '\n' + frameShiftDrive + '\n' + userShipCoreModules.get(2) + '\n' + userShipCoreModules.get(3) + '\n' + userShipCoreModules.get(4) + '\n' + userShipCoreModules.get(5) + '\n' + userShipOptionalModules;
     }
-
-    
-
-    //Add module to X position
-
-    //Set the array list length for optional modules.
 }
