@@ -193,7 +193,6 @@ public class Main {
                                 shipSelected = inUser.nextInt()-1;
                                 validSelection = true;
                             } catch (Exception e) {
-                                // TODO: handle exception
                                 System.out.println("Invalid selection. Try again.");
                                 //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
                                 inUser.next();
@@ -248,7 +247,6 @@ public class Main {
                                 }
                                 PressEnterKey();
                             } catch (Exception e) {
-                                // TODO: handle exception
                                 System.out.println('\n'+ "" + '\n' + "" + '\n' + "Invalid selection. Try again.");
                                 //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
                                 inUser.next();
@@ -279,7 +277,6 @@ public class Main {
                                     validSelection = true;
                                 }
                             } catch (Exception e) {
-                                // TODO: handle exception
                                 System.out.println("Invalid selection. Try again.");
                                 //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
                                 inUser.next();
@@ -293,18 +290,27 @@ public class Main {
                         validSelection = false;
                         while (!validSelection) {
                             System.out.println('\n'+ "" + '\n' + "" + '\n' + "Select what ship would you like to modify" + '\n');
+                            //Here to show the user all the ships they have.
                             ShowUserShips(userPosition, users, true);
                             try {
+                                //Makes the user select a ship
                                 shipSelected = inUser.nextInt()-1;
-                                System.out.println(users.get(userPosition).getUserShip(shipSelected).getUserShipCoreModulesArray());
+                                //Shows the ship with all its modules.
+                                System.out.println(users.get(userPosition).getUserShip(shipSelected));
                                 if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
                                     int slotProvided = ModuleMenuOptionSelection(modules, inUser);
                                     String moduleSelected = inUserCase5.next();
-                                    System.out.println(modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)));
+                                    if (slotProvided == 4) {
+                                        users.get(userPosition).getUserShip(shipSelected).setFSD(fsds.get(GetFSDArrayPositionWithUserInput(fsds, moduleSelected)));
+                                        System.out.println("FSD modificat correctament.");
+                                    } else {                                                                                                                                                                                            //This -2 is here, bc the modules are stored in an array list (it starts with 0 and has no blank spaces) And since we dont have the FSD in this array, and the array starts at 0, we need to remove 2 positions
+                                        users.get(userPosition).getUserShip(shipSelected).setUserShipCoreModule(modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)), slotProvided-2);
+                                        System.out.println("Modul modificat correctament");
+                                    }
+                                    System.out.println(users.get(userPosition).getUserShip(shipSelected));
                                 }
-                                validSelection = false;
+                                validSelection = true;
                             } catch (Exception e) {
-                                // TODO: handle exception
                                 System.out.println("Invalid selection. Try again.");
                                 //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
                                 inUser.next();
@@ -443,6 +449,16 @@ public class Main {
         }
         return FSDArrayPosition;
     }
+    public static int GetFSDArrayPositionWithUserInput (ArrayList<FSD> fsds, String identidierProvided) {
+        int FSDArrayPosition = 0;
+
+        for (int i = 0; i < fsds.size(); i++) {
+            if (fsds.get(i).getClassNumber() == identidierProvided.charAt(0)-'0' && fsds.get(i).getRatingCharacter().equals(identidierProvided.charAt(1))) {
+                   FSDArrayPosition = i;
+            }
+        }
+        return FSDArrayPosition;
+    }
 
     //Know in what position a given module is in an array.
     public static int GetModuleArrayPosition (ArrayList<Module> modules, int moduleType, String identidierProvided) {
@@ -500,7 +516,6 @@ public class Main {
         try {
             optionSelectionA = inUser.nextInt();
         } catch (Exception e) {
-            // TODO: handle exception
             System.out.println("Invalid selection. Try again.");
             //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
             inUser.next();
@@ -520,7 +535,6 @@ public class Main {
                 optionSelectionB = inUser.nextInt()+1;
                 validSelection = true;
             } catch (Exception e) {
-                // TODO: handle exception
                 System.out.println("Invalid selection. Try again.");
                 //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
                 inUser.next();
@@ -543,8 +557,9 @@ public class Main {
         }
         if (lastOption) {
             System.out.println("||" + (i+1) + ".    Cancel Operation.");
+            System.out.print('\n' + "Your Selection: ");
         }
-        System.out.print('\n' + "Your Selection: ");
+
     }
 
     //Press Space to continue...

@@ -84,6 +84,6 @@ public class UserShip {
 
     //ToString
     public String toString () {
-        return owner + " " + '\n' + shipModel.getShipName() + '\n' + userShipCoreModules.get(0) + '\n' + userShipCoreModules.get(1) + '\n' + frameShiftDrive + '\n' + userShipCoreModules.get(2) + '\n' + userShipCoreModules.get(3) + '\n' + userShipCoreModules.get(4) + '\n' + userShipCoreModules.get(5) + '\n' + userShipOptionalModules;
+        return owner + " " + '\n' + shipModel.getShipName() + '\n' + userShipCoreModules.get(0) + "Max class: " + shipModel.getMaxPowerPlant() + '\n' + '\n' + userShipCoreModules.get(1)+ "Max class: " + shipModel.getMaxThrusters() + '\n'  + '\n' + frameShiftDrive + "Max class: " + shipModel.getMaxFSD() + '\n'  + '\n' + userShipCoreModules.get(2)+ "Max class: " + shipModel.getMaxLifeSuport() + '\n'  + '\n' + userShipCoreModules.get(3)+ "Max class: " + shipModel.getMaxPowerDistributor() + '\n'  + '\n' + userShipCoreModules.get(4)+ "Max class: " + shipModel.getMaxSensors() + '\n'  + '\n' + userShipCoreModules.get(5)+ "Max class: " + shipModel.getMaxFuelTank() + '\n'  + '\n' + userShipOptionalModules;
     }
 }

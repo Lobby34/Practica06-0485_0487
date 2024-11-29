@@ -55,6 +55,6 @@ public class Module {
     //toString to show to user with the correct format
     public String toString () {
         String slotName[] = {"","BulkHead", "Power Plant","Thrusters","Frame Shift Drive (FSD)","Life Support","Power Distributor","Sensors","Fuel Tank","Optional Internal"};
-        return "Module: ||" + classNumber + ratingCharacter + " " + slotName[slot] + "||"+ '\n' + "Mass: " + mass + "(t)" + '\n';
+        return "||" + classNumber + ratingCharacter + " " + slotName[slot] + "||"+ '\n' + "Mass: " + mass + "(t)" + '\n';
     }
 }
