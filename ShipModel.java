@@ -80,6 +80,11 @@ public class ShipModel {
         return maxModuleClasses[7];
     }
 
+    //Max module class searching
+    public int getMaxModuleClassByArrayPosition (int i) {
+        return maxModuleClasses[i];
+    }
+
     //ToString
     public String toString () {
         return shipName + " " + hullMass + " " + maxModuleClasses[1] + " " + maxModuleClasses[2] + " " + maxModuleClasses[3] + " " + maxModuleClasses[4] + " " + maxModuleClasses[5] + " " + maxModuleClasses[6] + " " + maxModuleClasses[7];

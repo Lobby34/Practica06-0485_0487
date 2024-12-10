@@ -1,6 +1,6 @@
 owner
 shipModel NAME
-MODULE Identifier (25A,35A,45A)...
+MODULE Identifier (2 5 A,3 5 A,4 5 A)...
 FSD Identifier (5A)
 OptionalMODULE (Name,Name,Name)
 
@@ -12,6 +12,12 @@ Mandalay
 
 Lobby
 Anaconda
+2 5 A,3 5 A,5 5 A,6 5 A,7 5 A,8 5 C
+5 A
+-
+
+Scalibur
+Mandalay
 2 5 A,3 5 A,5 5 A,6 5 A,7 5 A,8 5 C
 5 A
 -
