@@ -6,7 +6,7 @@ OptionalMODULE (Name,Name,Name)
 
 Lobby
 Mandalay
-2 5 A,3 5 A,5 5 A,6 5 A,7 5 A,8 5 C
+2 5 A,3 5 A,5 4 A,6 5 A,7 5 A,8 5 C
 5 A
 -
 
@@ -14,6 +14,18 @@ Lobby
 Anaconda
 2 5 A,3 5 A,5 5 A,6 5 A,7 5 A,8 5 C
 5 A
+-
+
+Lobby
+Diamondback Explorer
+2 2 E,3 2 E,5 2 E,6 2 E,7 2 E,8 1 C
+2 E
+-
+
+Lobby
+Python MKII
+2 2 E,3 2 E,5 2 E,6 2 E,7 2 E,8 1 C
+2 E
 -
 
 Scalibur

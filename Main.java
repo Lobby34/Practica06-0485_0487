@@ -1,12 +1,14 @@
 
 
-import java.io.File; //Dependency here to import and read files .txt
+import java.io.File;                    //Dependency here to import and read files .txt
 import java.io.FileNotFoundException;   //Dependency here to handle exeptions and enable reading files .txt
-// import java.io.IOException;
-// import java.io.FileWriter;
-import java.util.Scanner;   //Dependency here to Scan files as well as user inputs.
-import java.util.ArrayList; //Dependency here to be able to create Dynamic Arrays of Objects, Strings, ints...
-import java.util.Base64; //Dependency here to be able to "Encrypt" and "Decrypt" passwords from and to Base64.
+import java.io.FileWriter;              //Dependecy here to write in .txt files
+import java.io.IOException;             //Dependency here to handle IO Exceptions when writting and reading files.
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Scanner;               //Dependency here to Scan files as well as user inputs.
+import java.util.ArrayList;             //Dependency here to be able to create Dynamic Arrays of Objects, Strings, ints...
+import java.util.Base64;                //Dependency here to be able to "Encrypt" and "Decrypt" passwords from and to Base64.
 
 public class Main {
     public static void main(String[] args) {
@@ -75,9 +77,11 @@ public class Main {
     //Import data from all .txt
         //CLASSRATINGCOEFICIENTS.TXT
         getClassRatingCoeficients(objClassRatingCoeficientsFile, ratingCoeficient, classCoeficient);
+        WriteLogs("RATING COEFICIENTS LOADED", null);
         //MODULE.TXT
             //Calling the method to scrape and load all the data contained in the txt path provided above.
         moduleFileOutput = getDataFromTXT(objModulesFile);
+        WriteLogs("MODULES LOADED IN THE PROGRAM ARRAY", null);
             //Transforming all the data scraped to objects so we can work with them in an array list.
                 //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-5 are parameters of an object, 6-10 another...)
         for (int i = 9; i < (moduleFileOutput.size()); i++) {
@@ -87,6 +91,7 @@ public class Main {
                 moduleFileOutput.get(i+3).charAt(0), 
                 Double.parseDouble(moduleFileOutput.get(i+4))
                 ));
+                WriteLogs("MODULE OBJECT CREATED", ("NAME: " + modules.getLast().getClassNumber()+modules.getLast().getRatingCharacter()));
             i = i+4;
         }
         //FSD.TXT
@@ -103,6 +108,7 @@ public class Main {
                 Double.parseDouble(FSDFileOutput.get(i+5)), 
                 Double.parseDouble(FSDFileOutput.get(i+6))
                 ));
+                WriteLogs("FSD OBJECT CREATED", "NAME: " + fsds.getLast().getClassNumber() + fsds.getLast().getRatingCharacter());
             i = i+6;
         }
             //This part of the code calls every FSD object and gives to each their RatingCoeficient and their ClassCoeficient.
@@ -130,6 +136,7 @@ public class Main {
                 Integer.parseInt(shipModelMaxCoreInternal[5]), 
                 Integer.parseInt(shipModelMaxCoreInternal[6])
                 ));
+                WriteLogs("SHIPMODEL OBJECT CREATED", "Name: " + shipModels.getLast().getShipName());
             i = i+4;
         }
         //USER.TXT
@@ -143,6 +150,7 @@ public class Main {
                 userFileOutput.get(i+1), 
                 currentUserShipsArray
                 ));
+                WriteLogs("USER OBJECT CREATED", "Name: " + users.getLast().getName());
             i = i+3;
         }
         //USERSHIP.TXT
@@ -150,19 +158,23 @@ public class Main {
         usershipsFileOutput = getDataFromTXT(objUserShipFile);
             //Transforming all the data scraped to objects so we can work with them in an array list.
                 //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-4 are parameters of an object, 5-8 another...)
-        for (int i = 6; i < (usershipsFileOutput.size()); i++) {
+        for (int i = 6; i < (usershipsFileOutput.size()-1); i++) {
             userShips.add(new UserShip(
                 usershipsFileOutput.get(i), 
                 shipModels.get(ShipModelArrayPosition(shipModels, usershipsFileOutput.get(i+1))), 
                 GetCoreModulesArrayPositions(modules, usershipsFileOutput.get(i+2)), 
                 fsds.get(GetFSDArrayPosition(fsds, usershipsFileOutput.get(i+3)))
                 ));
+                WriteLogs("USERSHIPS OBJECT CREATED", "Name: " + users.getLast().getName());
             i = i+5;
         }
             //This method is here to calculate the total mass of the ships since it isnt saved in the TXT file.
         calculateTotalMassOfUserShipsInArray(userShips);
+        WriteLogs("MASS OF ALL THE SHIPS CALCULATED", null);
 
     //USER AUTENTICATION AND PROGRAM LOOP START
+        //Here to clear the console only when the program is executed.
+        ClearConsole();
         while (programStatus) {
             //Here so if the user leaves and logins again the menu shows (and doesnt keep the last selected option) (Since logging off leaved last selection to log off, it would log off instantly)
             optionSelection = 0;
@@ -171,17 +183,23 @@ public class Main {
                 userName = inUser.next();
                 System.out.println("Please, provide the account password.");
                 userPassword = inUser.next();
+                ClearConsole();
                 //Testing if the user and password provided are inside the User list provided in the .txt
                 if (UserAutentication(users, userName, userPassword) == true) {
-                    System.out.println('\n'+ "" + '\n' + "" + '\n' + "Autentication successful" + '\n' + "" + '\n');
+                    System.out.println("Autentication successful" + '\n' + "" + '\n');
                     userLoggedOn = true;
+                    PressEnterKey();
+                    WriteLogs("USER AUTENTICATION WAS SUCESSFUL", "USER LOGGED ON: " + userName);
                     break;
                 } else {
-                    System.out.println('\n'+ "" + '\n' + "" + '\n' + "User or Password Incorrect." + '\n' + "Try again.");
+                    ClearConsole();
+                    System.out.println("User or Password Incorrect." + '\n' + "Try again.");
+                    WriteLogs("USER AUTENTICATION WAS NOT SUCESSFUL", "USER LOGGED ON: " + userName);
                 }
             }
             //Here to know the position of the users inside the array of users.
             userPosition = UserArrayPosition(users, userName);
+            WriteLogs("USER POSITION IN ARRAY CALCULATED", String.valueOf(userPosition));
 
             //Clearing the arrays just in case for subsequent uses.
             currentUserShipsArray.clear();
@@ -190,52 +208,59 @@ public class Main {
             for(int i = 0; i < userShips.size(); i++) {
                 if (userName.equals(userShips.get(i).getOwner())) {
                     currentUserShipsArray.add(userShips.get(i));
+                    WriteLogs("USERSHIP MOVED TO currentUserShipsArray", currentUserShipsArray.getLast().getShipModel().getShipName());
                 } else {
                     shipsNotBeingUsed.add(userShips.get(i));
+                    WriteLogs("USERSHIP MOVED TO shipsNotBeingUsed", shipsNotBeingUsed.getLast().getShipModel().getShipName());
                 }
+
             }
-            System.out.println(currentUserShipsArray);
-            System.out.println(shipsNotBeingUsed);
         //Main program loop. Looping all the options so the user can do diferent ones in the same instance without having to log in again.
             while (userLoggedOn) {
                 optionSelection = MenuOptionSelection(userName, inUser);
+                WriteLogs("MENU SELECTION", String.valueOf(optionSelection));
+                ClearConsole();
             //Option menu for the normal User. (Center of the app.)
                 switch (optionSelection) {
                 //CASE 1: Calculate the Ship JumpRange Capabilities.
                     case 1:
-                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "Select one of your current ships" + '\n');
+                        System.out.println("Select one of your current ships" + '\n');
                         validSelection = false;
                         while (!validSelection) {
                             try {
                                 ShowUserShips(userPosition, users, true);
+                                WriteLogs("OPTION SELECTED", String.valueOf(inUser));
                                 shipSelected = inUser.nextInt()-1;
+                                
                                 validSelection = true;
                             } catch (Exception e) {
                                 System.out.println("Invalid selection. Try again.");
                     //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
                                 inUser.next();
                             }
-                            System.out.println('\n'+ "" + '\n' + "" + '\n');
+                            ClearConsole();
                         }
                         if (shipSelected >= users.get(userPosition).getUserShipsArray().size()) {
                         } else {
                         System.out.println("The MAX distance you can cover in a Jump is: " + CalculateJumpRange(users.get(userPosition).getUserShip(shipSelected)) + '\n');
                         }
+                        WriteLogs("JUMP RANGE CALCULATED FOR THE SHIP", users.get(userPosition).getUserShip(shipSelected).getShipModel().getShipName());
                         PressEnterKey();
                         break;
 
                 //CASE 2: Show the User all their ships
                     case 2:
-                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "Displaying all the ships you have stored in your Hangar.");
+                        System.out.println("Displaying all the ships you have stored in your Hangar.");
                         ShowUserShips(userPosition, users, false);
                         System.out.println("");
                         PressEnterKey();
+                        WriteLogs("SHIPS SHOWN TO THE USER","");
                         break;
 
                 //CASE 3: Add a new ship to the User's hangar
                     case 3:
                     //Asking what ship the user would like to add.
-                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "What model of ship would you like to add to your hangar?" + '\n');
+                        System.out.println("What model of ship would you like to add to your hangar?" + '\n');
                         validSelection = false;
                         while (!validSelection) {
                             try {
@@ -247,6 +272,7 @@ public class Main {
                                 System.out.println("||" + (i+1) + ": Cancel operation.");
                                 System.out.print('\n' + "Your Selection: ");
                                 shipSelected = inUser.nextInt()-1;
+                                WriteLogs("USER INPUT",String.valueOf(shipSelected));
                     //If the selection prompted to the user above is correct, we make a confirmation so that the user doesen't add a ship by error. 
                                 if(shipSelected < shipModels.size()) {
                                     validSelection = true;
@@ -256,7 +282,7 @@ public class Main {
                         //Adding the ship with the model selected to the user hangar if the confirmation is correct.
                                     if (userConfirmation.charAt(0) == 'Y' || userConfirmation.charAt(0) == 'y') {
                                         users.get(userPosition).getUserShipsArray().add(new UserShip(userName, shipModels.get(shipSelected), GetCoreModulesArrayPositions(modules, "2 2 E,3 2 E,5 2 E,6 2 E,7 2 E,8 1 C"), fsds.get(GetFSDArrayPosition(fsds, "2 E"))));
-                                        userShips.getLast().calculateTotalMass();
+                                        currentUserShipsArray.getLast().calculateTotalMass();
                                         System.out.println("Ship added Successfully." + '\n');
                         //If anything goes wrong, the ship wont be added and the process canceled.
                                     } else {
@@ -303,6 +329,8 @@ public class Main {
                                         System.out.println("Process Canceled." + '\n');
                                     }
                                     validSelection = true;
+                                } else if (shipSelected == (shipModels.size())) {
+                                    validSelection = true;
                                 }
                             } catch (Exception e) {
                                 System.out.println("An error has ocurred. Try again.");
@@ -318,40 +346,56 @@ public class Main {
                         int slotProvided = 0;
                         validSelection = false;
                         while (!validSelection) {
-                            System.out.println('\n'+ "" + '\n' + "" + '\n' + "Select what ship would you like to modify" + '\n');
+                            System.out.println("Select what ship would you like to modify" + '\n');
                         //Here to show the user all the ships they have.
                             ShowUserShips(userPosition, users, true);
                                 try {
                             //Makes the user select a ship
                                     shipSelected = inUser.nextInt()-1;
+                                    ClearConsole();
                             //Shows the ship with all its modules.
                                     if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
-                                        System.out.println("THE SELECTED SHIP IS THE FOLLOWING ONE. " + users.get(userPosition).getUserShip(shipSelected) +'\n');
-                                        PressEnterKey();
+                                        System.out.println("THE SELECTED SHIP IS THE FOLLOWING ONE. " + '\n' + users.get(userPosition).getUserShip(shipSelected) +'\n');
                                         boolean validSlotProvided = false;
+                            //This loop is here to ensure that the slot selected is always lower than 8.
                                         while (!validSlotProvided){
-                                            slotProvided = ModuleMenuOptionSelection(modules, inUser);
+                                            slotProvided = ModuleMenuOptionSelection(modules, inUser, fsds);
+                                            
                                             if (slotProvided < 8) {
                                                 validSlotProvided = true;
                                             } else {
                                                 System.out.println("Slot provided is invalid. Try Again.");
+                                                ClearConsole();
                                             }
                                         }
+                            //THe modules are shown above in ModuleMenuOptionSelection, here we make the user select a module and if the module is FSD, we do something, if it is NOT an FSD we do the other path
                                         String moduleSelected = inUserCase5.next();
-                                        if (slotProvided == 4 && users.get(userPosition).getUserShip(shipSelected).getShipModel().getMaxFSD() >= moduleSelected.charAt(0)-'0') {
+                                //FSD Selected
+                                        if (slotProvided == 4 && users.get(userPosition).getUserShip(shipSelected).getShipModel().getMaxFSD() >= moduleSelected.charAt(0)-'0' && moduleSelected.charAt(1)-'A' <= 4) {
                                             users.get(userPosition).getUserShip(shipSelected).setFSD(fsds.get(GetFSDArrayPositionWithUserInput(fsds, moduleSelected)));
                                             System.out.println("FSD changed correctly.");
                                             PressEnterKey();
                                             validSelection = true;
-                                        } else if (users.get(userPosition).getUserShip(shipSelected).getShipModel().getMaxModuleClassByArrayPosition(slotProvided-1) >= moduleSelected.charAt(0)-'0') {                                                                                                                                                                                            //This -2 is here, bc the modules are stored in an array list (it starts with 0 and has no blank spaces) And since we dont have the FSD in this array, and the array starts at 0, we need to remove 2 positions
-                                            users.get(userPosition).getUserShip(shipSelected).setUserShipCoreModule(modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)), slotProvided-2);
+                                //Another Module that isn't the FSD selected
+                                                                                                                                                            //-1 To account the array size                                                          //This 4 is here Because there can only be 5 ratings, and we count from 0. A,B,C,D,E
+                                        } else if (users.get(userPosition).getUserShip(shipSelected).getShipModel().getMaxModuleClassByArrayPosition(slotProvided-1) >= moduleSelected.charAt(0)-'0' && moduleSelected.charAt(1)-'A' <= 4) {                                                                                                                                                                                            //This -2 is here, bc the modules are stored in an array list (it starts with 0 and has no blank spaces) And since we dont have the FSD in this array, and the array starts at 0, we need to remove 2 positions
+                                    //Since the FSD is in the middle of the list, but not in the module array, we need to remove a slot position after the FSD so the modules are changed in the correct slot. That's why we are doing this if here. 
+                                        //Slots after FSD
+                                            if(slotProvided > 2) {
+                                                users.get(userPosition).getUserShip(shipSelected).setUserShipCoreModule(modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)), slotProvided-3);
+                                        //Slots before FSD
+                                            } else {
+                                                users.get(userPosition).getUserShip(shipSelected).setUserShipCoreModule(modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)), slotProvided-2);
+                                            }
+                                            PressEnterKey();
                                             System.out.println("Module changed correctly.");
                                             validSelection = true;
                                         } else {
-                                            System.out.println("The selected module cannot fit in the space. Please select a smaller one.");
+                                            System.out.println("The selected module cannot fit in the space, or the Grade is non existant. Please select a module that can fit in the space provided.");
                                             PressEnterKey();
                                         }
                                         System.out.println(users.get(userPosition).getUserShip(shipSelected));
+                                        PressEnterKey();
 
                                     } else if (shipSelected == users.get(userPosition).getUserShipsArray().size()) {
                                         System.out.println("Process Canceled.");
@@ -371,6 +415,10 @@ public class Main {
                         System.out.println('\n'+ "" + '\n' + "" + '\n' + "You just logged off!!" + '\n'+ "" + '\n' + "" + '\n');
                         autenticationSuccessful = false;
                         userLoggedOn = false;
+                        //Here to save all the modifications made to the ships in the file UserShip.txt
+                        clearUserShipFile();
+                        WriteUserShipFile(users, userPosition, currentUserShipsArray, shipsNotBeingUsed);
+                        PressEnterKey();
                         break;
 
                 //CASE 7: Log off, save progress and shut down the app.        
@@ -379,17 +427,20 @@ public class Main {
                         userLoggedOn = false;
                         autenticationSuccessful = false;
                         programStatus = false;
+                        //Here to save all the modifications made to the ships in the file UserShip.txt
+                        clearUserShipFile();
+                        WriteUserShipFile(users, userPosition, currentUserShipsArray, shipsNotBeingUsed);
                         break;
 
                 //CASE 8: Other options not mentioned above. All of them will give an error.
                     default:
                         System.out.println('\n'+ "" + '\n' + "" + '\n' + "Invalid option selected." + '\n'+ "" + '\n' + "" + '\n');
-                        //userLoggedOn = false;
                         break;
                 }
             }
         }
         inUser.close();
+        inUserCase5.close();
     }
     
 //METHODS
@@ -471,7 +522,7 @@ public class Main {
         return shipModelPosition;
     }
 
-    //Know FSD position in the array of FSD thorugh Class and Rating
+    //Know FSD position in the array of FSD thorugh Class and Rating from the FSD.txt File
     public static int GetFSDArrayPosition (ArrayList<FSD> fsds, String identidierProvided) {
         int FSDArrayPosition = 0;
         String[] FSDArrayProvided = identidierProvided.split(" ");
@@ -482,6 +533,8 @@ public class Main {
         }
         return FSDArrayPosition;
     }
+
+    //Know FSD position in the array of FSD thorugh Class and Rating  from the Imput provided by the user.   
     public static int GetFSDArrayPositionWithUserInput (ArrayList<FSD> fsds, String identidierProvided) {
         int FSDArrayPosition = 0;
 
@@ -557,12 +610,14 @@ public class Main {
     }
 
     //Module menu Selection
-    public static int ModuleMenuOptionSelection (ArrayList<Module> modules, Scanner inUser) {
+    public static int ModuleMenuOptionSelection (ArrayList<Module> modules, Scanner inUser, ArrayList<FSD> fsds) {
         int optionSelectionB = 0;
         Boolean validSelection = false;
-        System.out.println('\n'+ "" + '\n' + "" + '\n' + "Which module slot would you like to change?");
+        ClearConsole();
+        System.out.println("Which module slot would you like to change?");
         System.out.println("||1. Power Plant." + '\n' + "||2. Thrusters." + '\n' + "||3. FSD." + '\n' + "||4. Life Support." + '\n' + "||5. Power Distributor." + '\n' + "||6. Sensors" + '\n' +"||7. Fuel Tank" + '\n');
-        System.out.print("Your Selection: "); 
+        System.out.print("Your Selection: ");
+        ClearConsole(); 
         while (!validSelection) {
             try {
                 optionSelectionB = inUser.nextInt()+1;
@@ -573,9 +628,15 @@ public class Main {
                 inUser.next();
             }
         }
-        for (int i = 0; i < modules.size(); i++) {
-            if (optionSelectionB == modules.get(i).getSlot()) {
-                System.out.println(modules.get(i));
+        if (optionSelectionB != 4) {
+            for (int i = 0; i < modules.size(); i++) {
+                if (optionSelectionB == modules.get(i).getSlot()) {
+                    System.out.println(modules.get(i));
+                }
+            }
+        } else {
+            for (int i = 0; i < fsds.size(); i++) {
+                System.out.println(fsds.get(i));
             }
         }
         System.out.print('\n' + "Your Selection: ");
@@ -595,6 +656,65 @@ public class Main {
 
     }
 
+    //Preps the UserShip.txt file, so only the template is there and the file is ready for saving and rewritting
+     public static void clearUserShipFile () {
+        try {
+            FileWriter objUserShipsClearFileWriter = new FileWriter("data\\UserShip.txt");
+            objUserShipsClearFileWriter.write(
+                "owner" + '\n' +
+                "shipModel NAME" + '\n' +
+                "MODULE Identifier (2 5 A,3 5 A,4 5 A)..." + '\n' +
+                "FSD Identifier (5A)" + '\n' +
+                "OptionalMODULE (Name,Name,Name)"  + '\n'
+                );
+            objUserShipsClearFileWriter.close();
+
+        } catch (Exception e) {
+            System.out.println("Nope");
+        }
+    } 
+
+    //Write in the file UserShip.txt all the ships provided thorugh an Array, like The current user array, or the unused ships array.
+    public static void WriteUserShipFile (ArrayList<User> users, int userPosition, ArrayList<UserShip> userShipsArray, ArrayList<UserShip> shipsNotUsedArray) {
+        try {
+            FileWriter objUserShipsFileWriter = new FileWriter("data\\UserShip.txt", true);
+            for (int i = 0; i < userShipsArray.size(); i++) {
+                objUserShipsFileWriter.write(
+                    "" + '\n' +
+                    users.get(userPosition).getName() + '\n' +
+                    users.get(userPosition).getUserShip(i).getShipModel().getShipName() + '\n' +
+                    users.get(userPosition).getUserShip(i).modulesToString() + '\n' +
+                    "-" + '\n'
+                    );
+            }
+            for (int i = 0; i < shipsNotUsedArray.size(); i++) {
+                objUserShipsFileWriter.write(
+                    '\n' + "" +
+                    shipsNotUsedArray.get(i).getOwner() + '\n' +
+                    shipsNotUsedArray.get(i).getShipModel().getShipName() + '\n' +
+                    shipsNotUsedArray.get(i).modulesToString() + '\n' +
+                    "-" + '\n'
+                    );
+            }
+            objUserShipsFileWriter.close();
+        } catch (Exception e) {
+            System.out.println("Something went wrong while trying to write the file.");
+        }
+    }
+
+    //
+    public static void WriteLogs (String logGiven, String userInput) {
+        LocalDate currentDate = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+        try {
+            File objLogFile = new File("logs\\"+ currentDate + ".log");
+            FileWriter objLogFileWriter = new FileWriter(objLogFile, true);
+            objLogFile.createNewFile();
+            objLogFileWriter.write(currentTime + " | " + logGiven + " | " + userInput + '\n');
+            objLogFileWriter.close();
+        } catch (IOException e) {}
+    }
+
     //Press Space to continue...
     public static void PressEnterKey () {
         try
@@ -603,6 +723,17 @@ public class Main {
             System.in.read();
         }  
         catch(Exception e)
-        {}  
+        {}
+        ClearConsole();
+    }
+
+    public static void ClearConsole() { //Mètode per netejar la terminal. Cortesía de l'Alejandro, Cortesia de ChatGPT.
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                new ProcessBuilder("clear").inheritIO().start().waitFor();
+            }
+        } catch (IOException | InterruptedException e) {}
     }
 }

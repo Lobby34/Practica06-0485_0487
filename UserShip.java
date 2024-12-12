@@ -86,4 +86,16 @@ public class UserShip {
     public String toString () {
         return owner + " " + '\n' + shipModel.getShipName() + '\n' + userShipCoreModules.get(0) + "Max class: " + shipModel.getMaxPowerPlant() + '\n' + '\n' + userShipCoreModules.get(1)+ "Max class: " + shipModel.getMaxThrusters() + '\n'  + '\n' + frameShiftDrive + "Max class: " + shipModel.getMaxFSD() + '\n'  + '\n' + userShipCoreModules.get(2)+ "Max class: " + shipModel.getMaxLifeSuport() + '\n'  + '\n' + userShipCoreModules.get(3)+ "Max class: " + shipModel.getMaxPowerDistributor() + '\n'  + '\n' + userShipCoreModules.get(4)+ "Max class: " + shipModel.getMaxSensors() + '\n'  + '\n' + userShipCoreModules.get(5)+ "Max class: " + shipModel.getMaxFuelTank() + '\n'  + '\n' + userShipOptionalModules;
     }
+
+    //ModulesToString for file Writting
+    public String modulesToString () {
+        return  getUserShipCoreModule(0).getSlot() + " " + getUserShipCoreModule(0).getClassNumber() + " " + getUserShipCoreModule(0).getRatingCharacter() + "," + 
+                getUserShipCoreModule(1).getSlot() + " " + getUserShipCoreModule(1).getClassNumber() + " " + getUserShipCoreModule(1).getRatingCharacter() + "," + 
+                getUserShipCoreModule(2).getSlot() + " " + getUserShipCoreModule(2).getClassNumber() + " " + getUserShipCoreModule(2).getRatingCharacter() + "," +
+                getUserShipCoreModule(3).getSlot() + " " + getUserShipCoreModule(3).getClassNumber() + " " + getUserShipCoreModule(3).getRatingCharacter() + "," +
+                getUserShipCoreModule(4).getSlot() + " " + getUserShipCoreModule(4).getClassNumber() + " " + getUserShipCoreModule(4).getRatingCharacter() + "," +
+                getUserShipCoreModule(5).getSlot() + " " + getUserShipCoreModule(5).getClassNumber() + " " + getUserShipCoreModule(5).getRatingCharacter() +
+                '\n' + frameShiftDrive.getClassNumber() + " " + frameShiftDrive.getRatingCharacter()
+        ;
+    } 
 }
