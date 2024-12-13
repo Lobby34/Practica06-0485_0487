@@ -1,12 +1,6 @@
 import java.util.ArrayList;
 
 public class User {
-    // public static void main (String[] args) {
-    //     String password = "1234";
-    //     String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
-    //     System.out.println(encodedPassword);
-    //}
-
     private String name;
     private String password;
     private ArrayList<UserShip> userShips;

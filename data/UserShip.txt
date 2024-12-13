@@ -22,10 +22,10 @@ Diamondback Explorer
 2 E
 -
 
-Lobby
+Xavier
 Python MKII
-2 2 E,3 2 E,5 2 E,6 2 E,7 2 E,8 1 C
-2 E
+2 6 A,3 5 A,5 4 C,6 6 A,7 5 A,8 1 C
+6 A
 -
 
 Scalibur

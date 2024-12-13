@@ -2,15 +2,16 @@
 
 import java.io.File;                    //Dependency here to import and read files .txt
 import java.io.FileNotFoundException;   //Dependency here to handle exeptions and enable reading files .txt
-import java.io.FileWriter;              //Dependecy here to write in .txt files
+import java.io.FileWriter;              //Dependency here to write in .txt files
 import java.io.IOException;             //Dependency here to handle IO Exceptions when writting and reading files.
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDate;             //Dependency here so we can create different logs depending on the date
+import java.time.LocalTime;             //Dependency here so we can show a time inside the logs.
 import java.util.Scanner;               //Dependency here to Scan files as well as user inputs.
 import java.util.ArrayList;             //Dependency here to be able to create Dynamic Arrays of Objects, Strings, ints...
 import java.util.Base64;                //Dependency here to be able to "Encrypt" and "Decrypt" passwords from and to Base64.
 
 public class Main {
+    @SuppressWarnings("unused")
     public static void main(String[] args) {
 //VARIABLES
         //File Array list to read files and store the objects made.
@@ -42,6 +43,7 @@ public class Main {
         int[] ratingCoeficient = new int[5];
         double[] classCoeficient = new double[7];
         String[] shipModelMaxCoreInternal;
+
         String[] shipModelMaxOptionalInternal;
             //This variable set is to split the ships that the user has from all the others, so when we save the ships in the file, we dont get fucked, ships dont get doubled, and ships save modified.
         ArrayList<UserShip> currentUserShipsArray = new ArrayList<UserShip>();
@@ -229,8 +231,8 @@ public class Main {
                         while (!validSelection) {
                             try {
                                 ShowUserShips(userPosition, users, true);
-                                WriteLogs("OPTION SELECTED", String.valueOf(inUser));
                                 shipSelected = inUser.nextInt()-1;
+                                WriteLogs("SHIP SELECTED", String.valueOf(shipSelected));
                                 
                                 validSelection = true;
                             } catch (Exception e) {
@@ -279,21 +281,26 @@ public class Main {
                                     System.out.println("Are you sure that you want to add the ship model: || " + shipModels.get(shipSelected).getShipName() + "?" + '\n' + "(Y/N)");
                                     System.out.print('\n' + "Your Selection: ");
                                     userConfirmation = inUser.next();
+                                    WriteLogs("USER INPUT",String.valueOf(userConfirmation));
                         //Adding the ship with the model selected to the user hangar if the confirmation is correct.
                                     if (userConfirmation.charAt(0) == 'Y' || userConfirmation.charAt(0) == 'y') {
                                         users.get(userPosition).getUserShipsArray().add(new UserShip(userName, shipModels.get(shipSelected), GetCoreModulesArrayPositions(modules, "2 2 E,3 2 E,5 2 E,6 2 E,7 2 E,8 1 C"), fsds.get(GetFSDArrayPosition(fsds, "2 E"))));
                                         currentUserShipsArray.getLast().calculateTotalMass();
+                                        WriteLogs("SHIP ADDED","TO USER: "+ userName + users.get(userPosition).getUserShipsArray().getLast().getShipModel().getShipName());
                                         System.out.println("Ship added Successfully." + '\n');
                         //If anything goes wrong, the ship wont be added and the process canceled.
                                     } else {
                                         System.out.println("Process Canceled." + '\n');                                        
                                         validSelection = true;
+                                        WriteLogs("SHIP NOT ADDED","");
                                     }
                     //Here we see if the option selected is the last one, made so the user can cancel the process.
                                 } else if (shipSelected == (shipModels.size())) {
                                     validSelection = true;
+                                    WriteLogs("SHIP NOT ADDED","");
                                 } else {
                                     System.out.println("Invalid selection. Try again.");
+                                    WriteLogs("SHIP NOT ADDED","INVALID SELECTION");
                                 }
                                 PressEnterKey();
                             } catch (Exception e) {
@@ -316,26 +323,31 @@ public class Main {
                         //Shows the ships owned by the current user, and asks the user to select one                        
                                 ShowUserShips(userPosition, users, true);
                                 shipSelected = inUser.nextInt()-1;
+                                WriteLogs("SHIP SELECTED",String.valueOf(shipSelected));
                         //Here to know if the selected ship exists, or the last option has been selected (Cancel process)
                                 if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
                                     System.out.print('\n' + "Are you sure that you want to PERMANENTLY REMOVE your: || " + users.get(userPosition).getUserShip(shipSelected).getShipModel().getShipName() + "?" + '\n' + "(Y/N)" + '\n' +"Your Selection: ");
                                     userConfirmation = inUser.next();
-                                    
+                                    WriteLogs("USER INPUT","CONFIRMATION GIVEN: " + userConfirmation);
                                     if (userConfirmation.charAt(0) == 'Y' || userConfirmation.charAt(0) == 'y') {
                                         System.out.println('\n'+ "" + '\n' + "" + '\n' + "The ship has been removed PERMANENTLY" + '\n');
                                         users.get(userPosition).getUserShipsArray().remove(shipSelected);
+                                        WriteLogs("SHIP REMOVED PERMANENTLY","");
                                     } else {
                         //Here, as said above, to cancel the process if the user selects the last option.
                                         System.out.println("Process Canceled." + '\n');
+                                        WriteLogs("PROCESS CANCELED","");
                                     }
                                     validSelection = true;
                                 } else if (shipSelected == (shipModels.size())) {
                                     validSelection = true;
+                                    WriteLogs("PROCESS CANCELED","");
                                 }
                             } catch (Exception e) {
                                 System.out.println("An error has ocurred. Try again.");
                                 //this varaible is here so the Try catch doesnt get into an infinite loop if it gives an error the frist time
                                 inUser.next();
+                                WriteLogs("PROCESS CANCELED","");
                             }
                         }
                             PressEnterKey();
@@ -352,55 +364,66 @@ public class Main {
                                 try {
                             //Makes the user select a ship
                                     shipSelected = inUser.nextInt()-1;
-                                    ClearConsole();
+                                    WriteLogs("SHIP SELECTED",String.valueOf(shipSelected));
+                                    //ClearConsole();
                             //Shows the ship with all its modules.
                                     if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
                                         System.out.println("THE SELECTED SHIP IS THE FOLLOWING ONE. " + '\n' + users.get(userPosition).getUserShip(shipSelected) +'\n');
                                         boolean validSlotProvided = false;
+                                        PressEnterKey();
                             //This loop is here to ensure that the slot selected is always lower than 8.
                                         while (!validSlotProvided){
                                             slotProvided = ModuleMenuOptionSelection(modules, inUser, fsds);
+                                            WriteLogs("SLOT PROVIDED",String.valueOf(slotProvided));
                                             
                                             if (slotProvided < 8) {
                                                 validSlotProvided = true;
                                             } else {
                                                 System.out.println("Slot provided is invalid. Try Again.");
-                                                ClearConsole();
+                                                PressEnterKey();
+                                                WriteLogs("INVALID SLOT","SLOT PROVIDED INVALID" + String.valueOf(slotProvided));
                                             }
                                         }
                             //THe modules are shown above in ModuleMenuOptionSelection, here we make the user select a module and if the module is FSD, we do something, if it is NOT an FSD we do the other path
                                         String moduleSelected = inUserCase5.next();
+                                        WriteLogs("MODULE SELECTED",moduleSelected);
                                 //FSD Selected
                                         if (slotProvided == 4 && users.get(userPosition).getUserShip(shipSelected).getShipModel().getMaxFSD() >= moduleSelected.charAt(0)-'0' && moduleSelected.charAt(1)-'A' <= 4) {
                                             users.get(userPosition).getUserShip(shipSelected).setFSD(fsds.get(GetFSDArrayPositionWithUserInput(fsds, moduleSelected)));
                                             System.out.println("FSD changed correctly.");
                                             PressEnterKey();
                                             validSelection = true;
-                                //Another Module that isn't the FSD selected
+                                            WriteLogs("FSD CHANGED", "FSD FROM SHIP " + users.get(userPosition).getUserShip(shipSelected).getShipModel().getShipName() + "HAS BEEN CHANGED TO:" + fsds.get(GetFSDArrayPositionWithUserInput(fsds, moduleSelected)));
+                                //Any other Module that isn't the FSD selected
                                                                                                                                                             //-1 To account the array size                                                          //This 4 is here Because there can only be 5 ratings, and we count from 0. A,B,C,D,E
                                         } else if (users.get(userPosition).getUserShip(shipSelected).getShipModel().getMaxModuleClassByArrayPosition(slotProvided-1) >= moduleSelected.charAt(0)-'0' && moduleSelected.charAt(1)-'A' <= 4) {                                                                                                                                                                                            //This -2 is here, bc the modules are stored in an array list (it starts with 0 and has no blank spaces) And since we dont have the FSD in this array, and the array starts at 0, we need to remove 2 positions
                                     //Since the FSD is in the middle of the list, but not in the module array, we need to remove a slot position after the FSD so the modules are changed in the correct slot. That's why we are doing this if here. 
                                         //Slots after FSD
-                                            if(slotProvided > 2) {
+                                            if(slotProvided > 3) {
                                                 users.get(userPosition).getUserShip(shipSelected).setUserShipCoreModule(modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)), slotProvided-3);
+                                                WriteLogs("MODULE CHANGED", "MODULE POSITION NUM: " + (slotProvided-3) +  " FROM SHIP: " + users.get(userPosition).getUserShip(shipSelected).getShipModel().getShipName() + "HAS BEEN CHANGED TO:" + modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)));
                                         //Slots before FSD
                                             } else {
                                                 users.get(userPosition).getUserShip(shipSelected).setUserShipCoreModule(modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)), slotProvided-2);
+                                                WriteLogs("MODULE CHANGED", "MODULE POSITION NUM: " + (slotProvided-2) +  " FROM SHIP: " + users.get(userPosition).getUserShip(shipSelected).getShipModel().getShipName() + "HAS BEEN CHANGED TO:" + modules.get(GetModuleArrayPosition(modules, slotProvided, moduleSelected)));
                                             }
-                                            PressEnterKey();
                                             System.out.println("Module changed correctly.");
+                                            PressEnterKey();
                                             validSelection = true;
                                         } else {
                                             System.out.println("The selected module cannot fit in the space, or the Grade is non existant. Please select a module that can fit in the space provided.");
+                                            WriteLogs("MODULE SELECTION INCORRECT", "Slot: " + slotProvided + " Module: " + moduleSelected);
                                             PressEnterKey();
                                         }
                                         System.out.println(users.get(userPosition).getUserShip(shipSelected));
                                         PressEnterKey();
+                                        WriteLogs("SHOWING SHIP TO USER", "");
 
                                     } else if (shipSelected == users.get(userPosition).getUserShipsArray().size()) {
                                         System.out.println("Process Canceled.");
                                         validSelection = true;
                                         PressEnterKey();
+                                        WriteLogs("MODULE NOT CHANGED", "");
                                     }
 
                                 } catch (Exception e) {
@@ -419,6 +442,7 @@ public class Main {
                         clearUserShipFile();
                         WriteUserShipFile(users, userPosition, currentUserShipsArray, shipsNotBeingUsed);
                         PressEnterKey();
+                        WriteLogs("INFORMATION STORED", "");
                         break;
 
                 //CASE 7: Log off, save progress and shut down the app.        
@@ -430,6 +454,7 @@ public class Main {
                         //Here to save all the modifications made to the ships in the file UserShip.txt
                         clearUserShipFile();
                         WriteUserShipFile(users, userPosition, currentUserShipsArray, shipsNotBeingUsed);
+                        WriteLogs("INFORMATION STORED", "");
                         break;
 
                 //CASE 8: Other options not mentioned above. All of them will give an error.
@@ -613,11 +638,10 @@ public class Main {
     public static int ModuleMenuOptionSelection (ArrayList<Module> modules, Scanner inUser, ArrayList<FSD> fsds) {
         int optionSelectionB = 0;
         Boolean validSelection = false;
-        ClearConsole();
+        // ClearConsole();
         System.out.println("Which module slot would you like to change?");
         System.out.println("||1. Power Plant." + '\n' + "||2. Thrusters." + '\n' + "||3. FSD." + '\n' + "||4. Life Support." + '\n' + "||5. Power Distributor." + '\n' + "||6. Sensors" + '\n' +"||7. Fuel Tank" + '\n');
         System.out.print("Your Selection: ");
-        ClearConsole(); 
         while (!validSelection) {
             try {
                 optionSelectionB = inUser.nextInt()+1;
