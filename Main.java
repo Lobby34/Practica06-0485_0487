@@ -322,7 +322,7 @@ public class Main {
                         //Loop made so if the selection is invalid, and does not find a module, or crashes, it restarts and asks again the questions.
                         while (!validSelection) {
                             try {
-                                System.out.println('\n'+ "" + '\n' + "" + '\n' + "What ship would you like to remove from your hangar?" + '\n');
+                                System.out.println("What ship would you like to remove from your hangar?" + '\n');
                         //Shows the ships owned by the current user, and asks the user to select one                        
                                 ShowUserShips(userPosition, users, true);
                                 shipSelected = inUser.nextInt()-1;
@@ -439,7 +439,7 @@ public class Main {
                         
                 //CASE 6: Log off but keep the app running.
                     case 6:
-                        System.out.println('\n'+ "" + '\n' + "" + '\n' + "You just logged off!!" + '\n'+ "" + '\n' + "" + '\n');
+                        System.out.println("You just logged off!!" + '\n'+ "" + '\n' + "" + '\n');
                         autenticationSuccessful = false;
                         userLoggedOn = false;
                         //Here to save all the modifications made to the ships in the file UserShip.txt
