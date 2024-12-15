@@ -243,11 +243,14 @@ public class Main {
                             ClearConsole();
                         }
                         if (shipSelected >= users.get(userPosition).getUserShipsArray().size()) {
+                            System.out.println("Process canceled.");
+                            PressEnterKey();
                         } else {
                         System.out.println("The MAX distance you can cover in a Jump is: " + CalculateJumpRange(users.get(userPosition).getUserShip(shipSelected)) + '\n');
-                        }
                         WriteLogs("JUMP RANGE CALCULATED FOR THE SHIP", users.get(userPosition).getUserShip(shipSelected).getShipModel().getShipName());
                         PressEnterKey();
+                        }
+
                         break;
 
                 //CASE 2: Show the User all their ships
@@ -339,7 +342,7 @@ public class Main {
                                         WriteLogs("PROCESS CANCELED","");
                                     }
                                     validSelection = true;
-                                } else if (shipSelected == (shipModels.size())) {
+                                } else if (shipSelected == (shipModels.size()-1)) {
                                     validSelection = true;
                                     WriteLogs("PROCESS CANCELED","");
                                 }
@@ -365,6 +368,7 @@ public class Main {
                             //Makes the user select a ship
                                     shipSelected = inUser.nextInt()-1;
                                     WriteLogs("SHIP SELECTED",String.valueOf(shipSelected));
+                                    ClearConsole();
                                     //ClearConsole();
                             //Shows the ship with all its modules.
                                     if (shipSelected < users.get(userPosition).getUserShipsArray().size()) {
