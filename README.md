@@ -1,4 +1,4 @@
-![](https://img.shields.io/github/stars/Lobby34/Practica06-0485_0487.md.svg) ![](https://img.shields.io/github/forks/Lobby34/Practica06-0485_0487.md.svg) ![](https://img.shields.io/github/tag/Lobby34/Practica06-0485_0487.md.svg) ![](https://img.shields.io/github/release/Lobby34/Practica06-0485_0487.md.svg) ![](https://img.shields.io/github/issues/Lobby34/Practica06-0485_0487.md.svg)
+![](https://img.shields.io/github/stars/Lobby34/Practica06-0485_0487) ![](https://img.shields.io/github/forks/Lobby34/Practica06-0485_0487.md.svg) ![](https://img.shields.io/github/tag/Lobby34/Practica06-0485_0487.md.svg) ![](https://img.shields.io/github/release/Lobby34/Practica06-0485_0487.md.svg) ![](https://img.shields.io/github/issues/Lobby34/Practica06-0485_0487.md.svg)
 # v1.0.2 User Manual
 ## Login
 ### Requirements
