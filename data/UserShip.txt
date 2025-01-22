@@ -19,7 +19,7 @@ Anaconda
 Lobby
 Diamondback Explorer
 2 2 E,3 2 E,5 2 E,6 2 E,7 2 E,8 1 C
-2 E
+5 A
 -
 
 Xavier

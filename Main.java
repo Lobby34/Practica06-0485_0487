@@ -33,15 +33,12 @@ public class Main {
         ArrayList<User> users = new ArrayList<>();
 
         //File objects
-//TESTS
         File objModuleFile = new File("data\\Module.xml");
-//TESTS
-        //File objModulesFile = new File("data\\Module.txt");
-        File objFSDFile = new File("data\\FSD.txt");
+        File objFSDFile = new File("data\\FSD.xml");
         File objClassRatingCoeficientsFile = new File("data\\ClassRatingCoeficients.txt");
-        File objShipModelFile = new File("data\\ShipModel.txt");
-        File objUserFile = new File("data\\User.txt");
-        File objUserShipFile = new File("data\\UserShip.txt");
+        File objShipModelFile = new File("data\\ShipModel.xml");
+        File objUserFile = new File("data\\User.xml");
+        File objUserShipFile = new File("data\\UserShip.xml");
 
         //Variables used to create the class objects.
         int[] ratingCoeficient = new int[5];
@@ -84,23 +81,21 @@ public class Main {
         //CLASSRATINGCOEFICIENTS.TXT
         getClassRatingCoeficients(objClassRatingCoeficientsFile, ratingCoeficient, classCoeficient);
         Methods.WriteLogs("RATING COEFICIENTS LOADED", null);
-        //MODULE.TXT
-            //Calling the method to scrape and load all the data contained in the txt path provided above.
-            Methods.WriteLogs("MODULES LOADED IN THE PROGRAM ARRAY", null);
+        //MODULE.XML
+            //Writting in logs that we started generating module objects.
+        Methods.WriteLogs("MODULES LOADED IN THE PROGRAM ARRAY", null);
             //Transforming all the data scraped to objects so we can work with them in an array list.
-                //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-5 are parameters of an object, 6-10 another...)
+                //This snippet of code goes through the xml and creates the objects.
         try {
             DocumentBuilderFactory dbFactoryModule = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilderModule = dbFactoryModule.newDocumentBuilder();
             Document docModule = dBuilderModule.parse(objModuleFile);
             XPath xPathModule =  XPathFactory.newInstance().newXPath();
             String expressionModule = "//Module";
-
             NodeList nodeListModule = (NodeList) xPathModule.compile(expressionModule).evaluate(docModule, XPathConstants.NODESET);
 
             for (int i = 0; i < nodeListModule.getLength(); i++) {
                 Node nNodeModule = nodeListModule.item(i);
-
                 if (nNodeModule.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElementModule = (Element) nNodeModule;
                     modules.add(new Module(
@@ -110,90 +105,144 @@ public class Main {
                         Double.parseDouble(eElementModule.getElementsByTagName("Mass").item(0).getTextContent())
                     ));
                 }
+                Methods.WriteLogs("MODULE OBJECT CREATED", ("NAME: " + modules.getLast().getClassNumber()+modules.getLast().getRatingCharacter()));
             }
-            Methods.WriteLogs("MODULE OBJECT CREATED", ("NAME: " + modules.getLast().getClassNumber()+modules.getLast().getRatingCharacter()));
         } catch (Exception e) {
                 e.printStackTrace();
         }  
 
 
-        //FSD.TXT
-            //Calling the method to scrape and load all the data contained in the txt path provided above.
-        FSDFileOutput = Methods.getDataFromTXT(objFSDFile);
+        //FSD.XML
+            //Writting in logs that we started generating module objects.
+        Methods.WriteLogs("FSDS LOADED IN THE PROGRAM ARRAY", null);
             //Transforming all the data scraped to objects so we can work with them in an array list.
-                //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 7. (positions 1-7 are parameters of an object, 8-15 another...)
-        for (int i = 9; i < (FSDFileOutput.size()); i++) {
-            fsds.add(new FSD(
-                Integer.parseInt(FSDFileOutput.get(i+1)), 
-                Integer.parseInt(FSDFileOutput.get(i+2)), 
-                FSDFileOutput.get(i+3).charAt(0), 
-                Double.parseDouble(FSDFileOutput.get(i+4)), 
-                Double.parseDouble(FSDFileOutput.get(i+5)), 
-                Double.parseDouble(FSDFileOutput.get(i+6))
-                ));
+                //This snippet of code goes through the array list of scrapped data and creates objects.
+        try {
+            DocumentBuilderFactory dbFactoryFSD = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilderFSD = dbFactoryFSD.newDocumentBuilder();
+            Document docFSD = dBuilderFSD.parse(objFSDFile);
+            XPath xPathFSD =  XPathFactory.newInstance().newXPath();
+            String expressionFSD = "//FSD"; 
+            NodeList nodeListFSD = (NodeList) xPathFSD.compile(expressionFSD).evaluate(docFSD, XPathConstants.NODESET);
+
+            for (int i = 0; i < nodeListFSD.getLength(); i++) {
+                Node nNodeFSD = nodeListFSD.item(i);
+                if (nNodeFSD.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElementFSD = (Element) nNodeFSD;
+                    fsds.add(new FSD(
+                        Integer.parseInt(eElementFSD.getAttribute("Type")),
+                        Integer.parseInt(eElementFSD.getElementsByTagName("Class").item(0).getTextContent()),
+                        eElementFSD.getElementsByTagName("Rating").item(0).getTextContent().charAt(0),
+                        Double.parseDouble(eElementFSD.getElementsByTagName("Mass").item(0).getTextContent()),
+                        Double.parseDouble(eElementFSD.getElementsByTagName("OMass").item(0).getTextContent()),
+                        Double.parseDouble(eElementFSD.getElementsByTagName("MaxFuel").item(0).getTextContent())
+                    ));
+                }
                 Methods.WriteLogs("FSD OBJECT CREATED", "NAME: " + fsds.getLast().getClassNumber() + fsds.getLast().getRatingCharacter());
-            i = i+6;
+            }
+        } catch (Exception e) {
+                e.printStackTrace();
         }
             //This part of the code calls every FSD object and gives to each their RatingCoeficient and their ClassCoeficient.
         for (int i = 0; i < fsds.size(); i++) {
-        fsds.get(i).setClassRating(ratingCoeficient, classCoeficient);
+            fsds.get(i).setClassRating(ratingCoeficient, classCoeficient);
         }
-        //SHIPMODEL.TXT
-            //Calling the method to scrape and load all the data contained in the txt path provided above.
-        shipModelFileOutput = Methods.getDataFromTXT(objShipModelFile);
+        //SHIPMODEL.XML
+                    //Writting in logs that we started generating module objects.
+        Methods.WriteLogs("SHIPMODELS LOADED IN THE PROGRAM ARRAY", null);
             //Transforming all the data scraped to objects so we can work with them in an array list.
-                //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-5 are parameters of an object, 6-10 another...)
-        for (int i = 6; i < (shipModelFileOutput.size()); i++) {
-            //This 2 lines are here to transform a String in format X,X,X,X,X,X,X to a array, where every X is a position in the array. There are 2 variables as to divide Optinal and Core Internal modules.
-            shipModelMaxCoreInternal = shipModelFileOutput.get(i+2).split(",");
-            shipModelMaxOptionalInternal = shipModelFileOutput.get(i+2).split(",");
-                //Constructor method of the shipModel without the Optional Internals. ATM Doing it without them.
-            shipModels.add(new ShipModel(
-                shipModelFileOutput.get(i), 
-                Double.parseDouble(shipModelFileOutput.get(i+1)), 
-                Integer.parseInt(shipModelMaxCoreInternal[0]), 
-                Integer.parseInt(shipModelMaxCoreInternal[1]), 
-                Integer.parseInt(shipModelMaxCoreInternal[2]), 
-                Integer.parseInt(shipModelMaxCoreInternal[3]), 
-                Integer.parseInt(shipModelMaxCoreInternal[4]), 
-                Integer.parseInt(shipModelMaxCoreInternal[5]), 
-                Integer.parseInt(shipModelMaxCoreInternal[6])
-                ));
+                //This snippet of code goes through the array list of scrapped data and creates objects.
+        try {
+            DocumentBuilderFactory dbFactoryShipModel = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilderShipModel = dbFactoryShipModel.newDocumentBuilder();
+            Document docShipModel = dBuilderShipModel.parse(objShipModelFile);
+            XPath xPathShipModel =  XPathFactory.newInstance().newXPath();
+            String expressionShipModel = "//ShipModel"; 
+            NodeList nodeListShipModel = (NodeList) xPathShipModel.compile(expressionShipModel).evaluate(docShipModel, XPathConstants.NODESET);
+
+            for (int i = 0; i < nodeListShipModel.getLength(); i++) {
+                Node nNodeShipModel = nodeListShipModel.item(i);
+                if (nNodeShipModel.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElementShipModel = (Element) nNodeShipModel;
+                    shipModels.add(new ShipModel(
+                        eElementShipModel.getAttribute("Name"),
+                        Double.parseDouble(eElementShipModel.getElementsByTagName("HullMass").item(0).getTextContent()),
+                        Integer.parseInt(eElementShipModel.getElementsByTagName("PowerPlant").item(0).getTextContent()),
+                        Integer.parseInt(eElementShipModel.getElementsByTagName("Thrusters").item(0).getTextContent()),
+                        Integer.parseInt(eElementShipModel.getElementsByTagName("FSD").item(0).getTextContent()),
+                        Integer.parseInt(eElementShipModel.getElementsByTagName("LifeSuport").item(0).getTextContent()),
+                        Integer.parseInt(eElementShipModel.getElementsByTagName("PowerDistributor").item(0).getTextContent()),
+                        Integer.parseInt(eElementShipModel.getElementsByTagName("Sensors").item(0).getTextContent()),
+                        Integer.parseInt(eElementShipModel.getElementsByTagName("FuelTank").item(0).getTextContent())
+                    ));
+                }
                 Methods.WriteLogs("SHIPMODEL OBJECT CREATED", "Name: " + shipModels.getLast().getShipName());
-            i = i+4;
+            }
+        } catch (Exception e) {
+                e.printStackTrace();
         }
         //USER.TXT
-            //Calling the method to scrape and load all the data contained in the txt path provided above.
-        userFileOutput = Methods.getDataFromTXT(objUserFile);
+            //Writting in logs that we started generating module objects.
+            Methods.WriteLogs("USERS LOADED IN THE PROGRAM ARRAY", null);
             //Transforming all the data scraped to objects so we can work with them in an array list.
-                //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-4 are parameters of an object, 5-8 another...)
-        for (int i = 0; i < (userFileOutput.size()); i++) {
-            users.add(new User(
-                userFileOutput.get(i), 
-                userFileOutput.get(i+1), 
-                currentUserShipsArray
-                ));
+                //This snippet of code goes through the xml and creates the objects.
+        try {
+            DocumentBuilderFactory dbFactoryUser = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilderUser = dbFactoryUser.newDocumentBuilder();
+            Document docUser = dBuilderUser.parse(objUserFile);
+            XPath xPathUser =  XPathFactory.newInstance().newXPath();
+            String expressionUser = "//User";
+            NodeList nodeListUser = (NodeList) xPathUser.compile(expressionUser).evaluate(docUser, XPathConstants.NODESET);
+
+            for (int i = 0; i < nodeListUser.getLength(); i++) {
+                Node nNodeUser = nodeListUser.item(i);
+                if (nNodeUser.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElementUser = (Element) nNodeUser;
+                    users.add(new User(
+                        eElementUser.getElementsByTagName("Name").item(0).getTextContent(),
+                        eElementUser.getElementsByTagName("Password").item(0).getTextContent(),
+                        currentUserShipsArray
+                    ));
+                }
                 Methods.WriteLogs("USER OBJECT CREATED", "Name: " + users.getLast().getName());
-            i = i+3;
-        }
+            }
+
+        } catch (Exception e) {
+                e.printStackTrace();
+        }  
+
         //USERSHIP.TXT
-            //Calling the method to scrape and load all the data contained in the txt path provided above.
-        usershipsFileOutput = Methods.getDataFromTXT(objUserShipFile);
+            //Writting in logs that we started generating module objects.
+            Methods.WriteLogs("USERSHIPS LOADED IN THE PROGRAM ARRAY", null);
             //Transforming all the data scraped to objects so we can work with them in an array list.
-                //This snippet of code goes through the array list of scrapped data and creates objects with position packs of 5. (positions 1-4 are parameters of an object, 5-8 another...)
-        for (int i = 6; i < (usershipsFileOutput.size()-1); i++) {
-            userShips.add(new UserShip(
-                usershipsFileOutput.get(i), 
-                shipModels.get(Methods.ShipModelArrayPosition(shipModels, usershipsFileOutput.get(i+1))), 
-                Methods.GetCoreModulesArrayPositions(modules, usershipsFileOutput.get(i+2)), 
-                fsds.get(Methods.GetFSDArrayPosition(fsds, usershipsFileOutput.get(i+3)))
-                ));
+                //This snippet of code goes through the xml and creates the objects.
+        try {
+            DocumentBuilderFactory dbFactoryUserShip = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilderUserShip = dbFactoryUserShip.newDocumentBuilder();
+            Document docUserShip = dBuilderUserShip.parse(objUserShipFile);
+            XPath xPathUserShip =  XPathFactory.newInstance().newXPath();
+            String expressionUserShip = "//UserShip";
+            NodeList nodeListUserShip = (NodeList) xPathUserShip.compile(expressionUserShip).evaluate(docUserShip, XPathConstants.NODESET);
+
+            for (int i = 0; i < nodeListUserShip.getLength(); i++) {
+                Node nNodeUserShip = nodeListUserShip.item(i);
+                if (nNodeUserShip.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElementUserShip = (Element) nNodeUserShip;
+                    userShips.add(new UserShip(
+                        eElementUserShip.getElementsByTagName("Owner").item(0).getTextContent(),
+                        shipModels.get(Methods.ShipModelArrayPosition(shipModels, eElementUserShip.getElementsByTagName("ShipModel").item(0).getTextContent())),
+                        Methods.GetCoreModulesArrayPositions(modules, eElementUserShip.getElementsByTagName("CoreInternal").item(0).getTextContent()),
+                        fsds.get(Methods.GetFSDArrayPosition(fsds, eElementUserShip.getElementsByTagName("FSD").item(0).getTextContent()))
+                    ));
+                }
                 Methods.WriteLogs("USERSHIPS OBJECT CREATED", "Name: " + users.getLast().getName());
-            i = i+5;
+            }
+        } catch (Exception e) {
+                e.printStackTrace();
         }
-            //This method is here to calculate the total mass of the ships since it isnt saved in the TXT file.
-            Methods.calculateTotalMassOfUserShipsInArray(userShips);
-            Methods.WriteLogs("MASS OF ALL THE SHIPS CALCULATED", null);
+        //This method is here to calculate the total mass of the ships since it isnt saved in the XML file.
+        Methods.calculateTotalMassOfUserShipsInArray(userShips);
+        Methods.WriteLogs("MASS OF ALL THE SHIPS CALCULATED", null); 
 
     //USER AUTENTICATION AND PROGRAM LOOP START
         //Here to clear the console only when the program is executed.

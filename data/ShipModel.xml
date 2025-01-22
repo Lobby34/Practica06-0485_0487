@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShipModels>
+    <ShipModel Name="Mandalay">
+        <HullMass>230.0</HullMass>
+        <PowerPlant>5</PowerPlant>
+        <Thrusters>5</Thrusters>
+        <FSD>5</FSD>
+        <LifeSuport>4</LifeSuport>
+        <PowerDistributor>5</PowerDistributor>
+        <Sensors>5</Sensors>
+        <FuelTank>5</FuelTank>
+    </ShipModel>
+    <ShipModel Name="Anaconda">
+        <HullMass>400.0</HullMass>
+        <PowerPlant>8</PowerPlant>
+        <Thrusters>7</Thrusters>
+        <FSD>6</FSD>
+        <LifeSuport>7</LifeSuport>
+        <PowerDistributor>8</PowerDistributor>
+        <Sensors>8</Sensors>
+        <FuelTank>5</FuelTank>
+    </ShipModel>
+    <ShipModel Name="Diamondback Explorer">
+        <HullMass>150.0</HullMass>
+        <PowerPlant>4</PowerPlant>
+        <Thrusters>4</Thrusters>
+        <FSD>5</FSD>
+        <LifeSuport>3</LifeSuport>
+        <PowerDistributor>4</PowerDistributor>
+        <Sensors>3</Sensors>
+        <FuelTank>5</FuelTank>
+    </ShipModel>
+    <ShipModel Name="Python MKII">
+        <HullMass>200.0</HullMass>
+        <PowerPlant>6</PowerPlant>
+        <Thrusters>6</Thrusters>
+        <FSD>5</FSD>
+        <LifeSuport>4</LifeSuport>
+        <PowerDistributor>6</PowerDistributor>
+        <Sensors>5</Sensors>
+        <FuelTank>4</FuelTank>
+    </ShipModel>
+</ShipModels>

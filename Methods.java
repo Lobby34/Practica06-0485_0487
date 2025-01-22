@@ -4,29 +4,10 @@ import java.time.LocalDate;                             //Dependency here so we 
 import java.time.LocalTime;                             //Dependency here so we can show a time inside the logs.
 import java.util.Base64;                                //Dependency here to be able to "Encrypt" and "Decrypt" passwords from and to Base64.
 import java.io.File;                                    //Dependency here to import and read files .xml
-import java.io.FileNotFoundException;                   //Dependency here to handle exeptions and enable reading files .xml
 import java.util.ArrayList;                             //Dependency here to be able to create Dynamic Arrays of Objects, Strings, ints...
 import java.util.Scanner;                               //Dependency here to Scan files as well as user inputs.
 
 public class Methods {
-        //Method used to Read files. Here we look at the file path provided and load the information to the program through an ArrayList<String> 
-    public static ArrayList<String> getDataFromTXT (File objFile) {
-        ArrayList<String> fileOutput = new ArrayList<String>();
-        try {
-            Scanner fileScanner = new Scanner(objFile);
-            while (fileScanner.hasNextLine()) {
-                String fileDataOutput = fileScanner.nextLine();
-                fileOutput.add(fileDataOutput);
-            }
-            fileScanner.close();
-        } catch (FileNotFoundException e) {
-            //Here to 1st see if the file is not found, 2nd to actually let the code rune without errors.
-            System.out.println("File " + objFile + " not found.");
-        }
-  
-        return fileOutput;
-    }
-
     //JumpRange Calculator
     public static double CalculateJumpRange (UserShip userShip) {
         userShip.calculateTotalMass();
