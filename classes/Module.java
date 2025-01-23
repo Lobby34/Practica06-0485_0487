@@ -1,3 +1,4 @@
+package classes;
 public class Module {
     //Variables
     private int slot;                   

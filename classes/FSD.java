@@ -1,3 +1,5 @@
+package classes;
+
 public class FSD extends Module {
     private double optimalMass;
     private double maxFuelJump;

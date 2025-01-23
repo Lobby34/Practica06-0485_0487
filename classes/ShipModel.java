@@ -1,3 +1,4 @@
+package classes;
 public class ShipModel {
     private String shipName;
     private double hullMass;

@@ -2,34 +2,27 @@ import java.io.File;                                    //Dependency here to imp
 import java.io.FileNotFoundException;                   //Dependency here to handle exeptions and enable reading files .txt
 import java.util.Scanner;                               //Dependency here to Scan files as well as user inputs.
 import java.util.ArrayList;                             //Dependency here to be able to create Dynamic Arrays of Objects, Strings, ints...
-import org.w3c.dom.*;                            //Dependency here to be able to use the Document variable type to be able to read and write xml files.
+import org.w3c.dom.*;                                   //Dependency here to be able to use the Document variable type to be able to read and write xml files.
+
+import classes.FSD;
+import classes.Module;
+import classes.ShipModel;
+import classes.User;
+import classes.UserShip;
+
 import javax.xml.parsers.DocumentBuilder;               //Dependency here to be able to create XML files.
 import javax.xml.parsers.DocumentBuilderFactory;        //Dependency here to be able to create XML files.
-import javax.xml.transform.Transformer;                 //Dependency here to write into an XML file once changes have been made.
-import javax.xml.transform.TransformerFactory;          //Dependency here to write into an XML file once changes have been made.
-import javax.xml.transform.dom.DOMSource;               //Dependency here to write into an XML file once changes have been made.
-import javax.xml.transform.stream.StreamResult;         //Dependency here to write into an XML file once changes have been made.
 import javax.xml.xpath.*;
 
 public class Main {
-    @SuppressWarnings("unused")
+
     public static void main(String[] args) {
 //VARIABLES
         //File Array list to read files and store the objects made.
-            //Variables used to store in an array all the lines as string in the Modules.txt and store the Module Objects.
-        ArrayList<String> moduleFileOutput = new ArrayList<String>();
         ArrayList<Module> modules = new ArrayList<Module>();
-            //Variables used to store in an array all the lines as string in the FSD.txt and store the FSD Objects.
-        ArrayList<String> FSDFileOutput = new ArrayList<String>();
         ArrayList<FSD> fsds = new ArrayList<FSD>();
-            //Variables used to store in an array all the lines as string in the ShipModel.txt and store the shipModel Objects.
-        ArrayList<String> shipModelFileOutput = new ArrayList<String>();
         ArrayList<ShipModel> shipModels = new ArrayList<ShipModel>();
-            //Variables used to store in an array all the lines as string in the userShips.txt and store the userShip Objects.
-        ArrayList<String> usershipsFileOutput = new ArrayList<String>();
         ArrayList<UserShip> userShips = new ArrayList<UserShip>();
-            //Variables used to store in an array all the lines as string in the User.txt and store the User Objects.
-        ArrayList<String> userFileOutput = new ArrayList<String>();
         ArrayList<User> users = new ArrayList<>();
 
         //File objects
@@ -43,10 +36,9 @@ public class Main {
         //Variables used to create the class objects.
         int[] ratingCoeficient = new int[5];
         double[] classCoeficient = new double[7];
-        String[] shipModelMaxCoreInternal;
 
-        String[] shipModelMaxOptionalInternal;
-            //This variable set is to split the ships that the user has from all the others, so when we save the ships in the file, we dont get fucked, ships dont get doubled, and ships save modified.
+
+        //This variable set is to split the ships that the user has from all the others, so when we save the ships in the file, we dont get fucked, ships dont get doubled, and ships save modified.
         ArrayList<UserShip> currentUserShipsArray = new ArrayList<UserShip>();
         ArrayList<UserShip> shipsNotBeingUsed = new ArrayList<>();
 
@@ -235,7 +227,7 @@ public class Main {
                         fsds.get(Methods.GetFSDArrayPosition(fsds, eElementUserShip.getElementsByTagName("FSD").item(0).getTextContent()))
                     ));
                 }
-                Methods.WriteLogs("USERSHIPS OBJECT CREATED", "Name: " + users.getLast().getName());
+                Methods.WriteLogs("USERSHIPS OBJECT CREATED", "Owner Name: " + userShips.getLast().getOwner() + " Ship Name: " + userShips.getLast().getShipModel().getShipName());
             }
         } catch (Exception e) {
                 e.printStackTrace();
@@ -513,7 +505,6 @@ public class Main {
                         autenticationSuccessful = false;
                         userLoggedOn = false;
                         //Here to save all the modifications made to the ships in the file UserShip.txt
-                        Methods.clearUserShipFile();
                         Methods.WriteUserShipFile(users, userPosition, currentUserShipsArray, shipsNotBeingUsed);
                         Methods.PressEnterKey();
                         Methods.WriteLogs("INFORMATION STORED", "");
@@ -526,7 +517,6 @@ public class Main {
                         autenticationSuccessful = false;
                         programStatus = false;
                         //Here to save all the modifications made to the ships in the file UserShip.txt
-                        Methods.clearUserShipFile();
                         Methods.WriteUserShipFile(users, userPosition, currentUserShipsArray, shipsNotBeingUsed);
                         Methods.WriteLogs("INFORMATION STORED", "");
                         break;

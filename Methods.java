@@ -4,8 +4,23 @@ import java.time.LocalDate;                             //Dependency here so we 
 import java.time.LocalTime;                             //Dependency here so we can show a time inside the logs.
 import java.util.Base64;                                //Dependency here to be able to "Encrypt" and "Decrypt" passwords from and to Base64.
 import java.io.File;                                    //Dependency here to import and read files .xml
+import java.io.FileOutputStream;
 import java.util.ArrayList;                             //Dependency here to be able to create Dynamic Arrays of Objects, Strings, ints...
 import java.util.Scanner;                               //Dependency here to Scan files as well as user inputs.
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.*;
+
+import classes.FSD;
+import classes.Module;
+import classes.ShipModel;
+import classes.User;
+import classes.UserShip;                                   
 
 public class Methods {
     //JumpRange Calculator
@@ -170,49 +185,73 @@ public class Methods {
 
     }
 
-    //Preps the UserShip.txt file, so only the template is there and the file is ready for saving and rewritting
-     public static void clearUserShipFile () {
-        try {
-            FileWriter objUserShipsClearFileWriter = new FileWriter("data\\UserShip.txt");
-            objUserShipsClearFileWriter.write(
-                "owner" + '\n' +
-                "shipModel NAME" + '\n' +
-                "MODULE Identifier (2 5 A,3 5 A,4 5 A)..." + '\n' +
-                "FSD Identifier (5A)" + '\n' +
-                "OptionalMODULE (Name,Name,Name)"  + '\n'
-                );
-            objUserShipsClearFileWriter.close();
-
-        } catch (Exception e) {
-            System.out.println("Nope");
-        }
-    } 
-
     //Write in the file UserShip.txt all the ships provided thorugh an Array, like The current user array, or the unused ships array.
     public static void WriteUserShipFile (ArrayList<User> users, int userPosition, ArrayList<UserShip> userShipsArray, ArrayList<UserShip> shipsNotUsedArray) {
-        try {
-            FileWriter objUserShipsFileWriter = new FileWriter("data\\UserShip.txt", true);
+        try {  
+    	    //Creating a DocumentBuilder Object 
+            DocumentBuilderFactory docFactoryWriteUserShip = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilderWriteUserShip = docFactoryWriteUserShip.newDocumentBuilder();
+         
+            //Creating a new xml Document       
+            Document docWriteUserShip = docBuilderWriteUserShip.newDocument();
+            Element rootElementWriteUserShip = docWriteUserShip.createElement("UserShips");
+            docWriteUserShip.appendChild(rootElementWriteUserShip);
+         
+            //Adding new department element
             for (int i = 0; i < userShipsArray.size(); i++) {
-                objUserShipsFileWriter.write(
-                    "" + '\n' +
-                    users.get(userPosition).getName() + '\n' +
-                    users.get(userPosition).getUserShip(i).getShipModel().getShipName() + '\n' +
-                    users.get(userPosition).getUserShip(i).modulesToString() + '\n' +
-                    "-" + '\n'
-                    );
+                Element UserShipWriteUserShip = docWriteUserShip.createElement("UserShip");
+                Element OwnerWriteUserShip = docWriteUserShip.createElement("Owner");
+                Element ShipModelWriteUserShip = docWriteUserShip.createElement("ShipModel");
+                Element CoreInternalWriteUserShip = docWriteUserShip.createElement("CoreInternal");
+                Element FSDWriteUserShip = docWriteUserShip.createElement("FSD");
+                UserShipWriteUserShip.appendChild(OwnerWriteUserShip);
+                UserShipWriteUserShip.appendChild(ShipModelWriteUserShip);
+                UserShipWriteUserShip.appendChild(CoreInternalWriteUserShip);
+                UserShipWriteUserShip.appendChild(FSDWriteUserShip);
+                OwnerWriteUserShip.appendChild(docWriteUserShip.createTextNode(users.get(userPosition).getName()));
+                ShipModelWriteUserShip.appendChild(docWriteUserShip.createTextNode(users.get(userPosition).getUserShip(i).getShipModel().getShipName()));
+                CoreInternalWriteUserShip.appendChild(docWriteUserShip.createTextNode(users.get(userPosition).getUserShip(i).modulesToString()));
+                FSDWriteUserShip.appendChild(docWriteUserShip.createTextNode(users.get(userPosition).getUserShip(i).getUserShipFSD().getClassNumber() + " " + users.get(userPosition).getUserShip(i).getUserShipFSD().getRatingCharacter()));
+                rootElementWriteUserShip.appendChild(UserShipWriteUserShip);
+         
+            //Creating transformer object
+                TransformerFactory transformerFactoryWriteUserShip = TransformerFactory.newInstance();
+                Transformer transformerWriteUserShip = transformerFactoryWriteUserShip.newTransformer();
+         
+            //Writing updated content into the file
+                DOMSource sourceWriteUserShip = new DOMSource(docWriteUserShip);
+                FileOutputStream outputWriteUserShip = new FileOutputStream("data\\UserShip.xml");
+                StreamResult resultWriteUserShip = new StreamResult(outputWriteUserShip);
+                transformerWriteUserShip.transform(sourceWriteUserShip, resultWriteUserShip);
             }
             for (int i = 0; i < shipsNotUsedArray.size(); i++) {
-                objUserShipsFileWriter.write(
-                    '\n' + "" +
-                    shipsNotUsedArray.get(i).getOwner() + '\n' +
-                    shipsNotUsedArray.get(i).getShipModel().getShipName() + '\n' +
-                    shipsNotUsedArray.get(i).modulesToString() + '\n' +
-                    "-" + '\n'
-                    );
+                Element UserShipWriteUserShip = docWriteUserShip.createElement("UserShip");
+                Element OwnerWriteUserShip = docWriteUserShip.createElement("Owner");
+                Element ShipModelWriteUserShip = docWriteUserShip.createElement("ShipModel");
+                Element CoreInternalWriteUserShip = docWriteUserShip.createElement("CoreInternal");
+                Element FSDWriteUserShip = docWriteUserShip.createElement("FSD");
+                UserShipWriteUserShip.appendChild(OwnerWriteUserShip);
+                UserShipWriteUserShip.appendChild(ShipModelWriteUserShip);
+                UserShipWriteUserShip.appendChild(CoreInternalWriteUserShip);
+                UserShipWriteUserShip.appendChild(FSDWriteUserShip);
+                OwnerWriteUserShip.appendChild(docWriteUserShip.createTextNode(shipsNotUsedArray.get(i).getOwner()));
+                ShipModelWriteUserShip.appendChild(docWriteUserShip.createTextNode(shipsNotUsedArray.get(i).getShipModel().getShipName()));
+                CoreInternalWriteUserShip.appendChild(docWriteUserShip.createTextNode(shipsNotUsedArray.get(i).modulesToString()));
+                FSDWriteUserShip.appendChild(docWriteUserShip.createTextNode(shipsNotUsedArray.get(i).getUserShipFSD().getClassNumber() + " " + shipsNotUsedArray.get(i).getUserShipFSD().getRatingCharacter()));
+                rootElementWriteUserShip.appendChild(UserShipWriteUserShip);
+         
+            //Creating transformer object
+                TransformerFactory transformerFactoryWriteUserShip = TransformerFactory.newInstance();
+                Transformer transformerWriteUserShip = transformerFactoryWriteUserShip.newTransformer();
+         
+            //Writing updated content into the file
+                DOMSource sourceWriteUserShip = new DOMSource(docWriteUserShip);
+                FileOutputStream outputWriteUserShip = new FileOutputStream("data\\UserShip.xml");
+                StreamResult resultWriteUserShip = new StreamResult(outputWriteUserShip);
+                transformerWriteUserShip.transform(sourceWriteUserShip, resultWriteUserShip);
             }
-            objUserShipsFileWriter.close();
-        } catch (Exception e) {
-            System.out.println("Something went wrong while trying to write the file.");
+        } catch (Exception e) { 
+            e.printStackTrace();
         }
     }
 

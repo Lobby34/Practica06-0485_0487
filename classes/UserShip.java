@@ -1,3 +1,4 @@
+package classes;
 import java.util.ArrayList;
 
 public class UserShip {
@@ -94,8 +95,6 @@ public class UserShip {
                 getUserShipCoreModule(2).getSlot() + " " + getUserShipCoreModule(2).getClassNumber() + " " + getUserShipCoreModule(2).getRatingCharacter() + "," +
                 getUserShipCoreModule(3).getSlot() + " " + getUserShipCoreModule(3).getClassNumber() + " " + getUserShipCoreModule(3).getRatingCharacter() + "," +
                 getUserShipCoreModule(4).getSlot() + " " + getUserShipCoreModule(4).getClassNumber() + " " + getUserShipCoreModule(4).getRatingCharacter() + "," +
-                getUserShipCoreModule(5).getSlot() + " " + getUserShipCoreModule(5).getClassNumber() + " " + getUserShipCoreModule(5).getRatingCharacter() +
-                '\n' + frameShiftDrive.getClassNumber() + " " + frameShiftDrive.getRatingCharacter()
-        ;
+                getUserShipCoreModule(5).getSlot() + " " + getUserShipCoreModule(5).getClassNumber() + " " + getUserShipCoreModule(5).getRatingCharacter();
     } 
 }
